@@ -1,0 +1,11 @@
+{application, noesis, [
+  {description, "A collection of useful utility functions."},
+  {vsn, "0.1"},
+  {modules, []},
+  {registered, []},
+  {applications, [
+    kernel,
+    stdlib
+  ]},
+  {env, []}
+]}.
