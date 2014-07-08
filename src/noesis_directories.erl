@@ -17,17 +17,18 @@
 
 % API
 -export([
- priv/1
+  application/1,
+  priv/1
 ]).
 
 % API
 
-% @doc Returns the path to `priv/' directory of a given module.
--spec priv(module()) -> string().
-priv(Mod) ->
+% @doc Returns the path to "root" directory of a given module.
+-spec application(module()) -> string().
+application(Mod) ->
   Ebin = filename:dirname(code:which(Mod)),
   Root = filename:dirname(Ebin),
-  Path = case string:substr(Root, 1, 1) of
+  case string:substr(Root, 1, 1) of
     "." ->
       {ok, Cwd} = file:get_cwd(),
       EunitTest = string:str(Cwd, ".eunit") > 0,
@@ -38,5 +39,11 @@ priv(Mod) ->
         true -> Root
       end;
     _ -> Root
-  end,
-  filename:join(Path, "priv").
+  end.
+
+
+% @doc Returns the path to `priv/' directory of a given module.
+-spec priv(module()) -> string().
+priv(Mod) ->
+  Root = application(Mod),
+  filename:join(Root, "priv").
