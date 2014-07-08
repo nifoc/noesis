@@ -31,7 +31,7 @@
 
 % API
 
-% @doc Returns the current UTC Unix timestamp.<br />
+% @doc Returns the current UTC Unix timestamp.
 -spec timestamp() -> timestamp().
 timestamp() ->
   {Mega, Secs, _} = os:timestamp(),
