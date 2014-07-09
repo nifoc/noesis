@@ -25,3 +25,13 @@ local_timestamp_test() ->
   ok = timer:sleep(1100),
   TimeB = noesis_datetime:local_timestamp(),
   ?assert(TimeA < TimeB).
+
+timestamp_distance_test() ->
+  ?assert(noesis_datetime:timestamp_distance(gte, 1357084799, 1357171199, {1, day})),
+  ?assert(noesis_datetime:timestamp_distance(gte, 1357171199, 1357084799, {1, day})),
+  ?assert(noesis_datetime:timestamp_distance(lte, 1357084799, 1357171199, {1, day})),
+  ?assert(noesis_datetime:timestamp_distance(lte, 1357171199, 1357084799, {1, day})),
+  ?assert(noesis_datetime:timestamp_distance(eq, 1357084799, 1357171199, {1, day})),
+  ?assertNot(noesis_datetime:timestamp_distance(eq, 1357084799, 1357171198, {1, day})),
+  ?assert(noesis_datetime:timestamp_distance(lt, 1357084799, 1357171198, {1, day})),
+  ?assert(noesis_datetime:timestamp_distance(gt, 1357084799, 1357171200, {1, day})).

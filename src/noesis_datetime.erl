@@ -17,16 +17,23 @@
 
 % Types
 
+-type range_days() :: {non_neg_integer(), day} | {non_neg_integer(), days}.
+
 -type timestamp() :: non_neg_integer().
+-type comparison_op() :: lt | lte | eq | gt | gte.
+-type range() :: range_days().
 
 -export_type([
-  timestamp/0
+  timestamp/0,
+  comparison_op/0,
+  range/0
 ]).
 
 % API
 -export([
   timestamp/0,
-  local_timestamp/0
+  local_timestamp/0,
+  timestamp_distance/4
 ]).
 
 % API
@@ -44,3 +51,32 @@ local_timestamp() ->
   UnixEpoch = 62167219200,
   LocalEpoch = calendar:datetime_to_gregorian_seconds(Now),
   LocalEpoch - UnixEpoch.
+
+% @doc Takes two Unix timestamps and compares their distance to a given range.<br /><br />
+%      <strong>Comparion operations</strong><br />
+%      Less than: `lt'<br />
+%      Less than or equal to: `lte'<br />
+%      Equal: `eq'<br />
+%      Greater than: `gt'<br />
+%      Greater than or equal to: `gte'<br /><br />
+%      <strong>Ranges</strong><br />
+%      `{X, days}'
+-spec timestamp_distance(comparison_op(), timestamp(), timestamp(), range()) -> boolean().
+timestamp_distance(Op, A, B, Range) when A > B ->
+  timestamp_distance(Op, B, A, Range);
+timestamp_distance(Op, A, B, Range) ->
+  Seconds = range_to_seconds(Range),
+  Diff = B - A,
+  compare_timestamps(Op, Diff, Seconds).
+
+% Private
+
+-spec range_to_seconds(range()) -> non_neg_integer().
+range_to_seconds({X, R}) when R =:= days orelse R =:= day -> 60 * 60 * 24 * X.
+
+-spec compare_timestamps(comparison_op(), non_neg_integer(), non_neg_integer()) -> boolean().
+compare_timestamps(lt, Diff, Seconds) -> Diff < Seconds;
+compare_timestamps(lte, Diff, Seconds) -> Diff =< Seconds;
+compare_timestamps(eq, Diff, Seconds) -> Diff =:= Seconds;
+compare_timestamps(gt, Diff, Seconds) -> Diff > Seconds;
+compare_timestamps(gte, Diff, Seconds) -> Diff >= Seconds.
