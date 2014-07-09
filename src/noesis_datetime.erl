@@ -37,7 +37,7 @@ timestamp() ->
   {Mega, Secs, _} = os:timestamp(),
   Mega * 1000000 + Secs.
 
-% doc Returns the current Unix timestamp in the timezone of the system.
+% @doc Returns the current Unix timestamp in the timezone of the system.
 -spec local_timestamp() -> timestamp().
 local_timestamp() ->
   Now = calendar:local_time(),
