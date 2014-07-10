@@ -15,6 +15,10 @@
 
 -module(noesis_datetime).
 
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+-endif.
+
 % Types
 
 -type range_seconds() :: {non_neg_integer(), second} | {non_neg_integer(), seconds}.
@@ -37,12 +41,14 @@
 -export([
   timestamp/0,
   local_timestamp/0,
-  timestamp_distance/4
+  timestamp_distance/4,
+  rfc1123/0,
+  rfc1123/1
 ]).
 
 % API
 
-% @doc Returns the current UTC Unix timestamp.
+% @doc Returns the current Unix timestamp (UTC).
 -spec timestamp() -> timestamp().
 timestamp() ->
   {Mega, Secs, _} = os:timestamp(),
@@ -77,6 +83,19 @@ timestamp_distance(Op, A, B, Range) ->
   Diff = B - A,
   compare_timestamps(Op, Diff, Seconds).
 
+% @doc Returns the current date and time (UTC) according to RFC 1123.
+-spec rfc1123() -> binary().
+rfc1123() ->
+  Now = calendar:universal_time(),
+  rfc1123(Now).
+
+% @doc Formats any `calendar:datetime()' (UTC) according to RFC 1123.
+-spec rfc1123(calendar:datetime()) -> binary().
+rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
+  Weekday = calendar:day_of_the_week({Year, Month, Day}),
+  Formatted = io_lib:format("~s, ~2..0w ~s ~w ~2..0w:~2..0w:~2..0w GMT", [rfc1123_dayname(Weekday), Day, rfc1123_monthname(Month), Year, Hour, Minute, Second]),
+  unicode:characters_to_binary(Formatted).
+
 % Private
 
 -spec range_to_seconds(range()) -> non_neg_integer().
@@ -92,3 +111,51 @@ compare_timestamps(lte, Diff, Seconds) -> Diff =< Seconds;
 compare_timestamps(eq, Diff, Seconds) -> Diff =:= Seconds;
 compare_timestamps(gt, Diff, Seconds) -> Diff > Seconds;
 compare_timestamps(gte, Diff, Seconds) -> Diff >= Seconds.
+
+-spec rfc1123_dayname(1..7) -> string().
+rfc1123_dayname(1) -> "Mon";
+rfc1123_dayname(2) -> "Tue";
+rfc1123_dayname(3) -> "Wed";
+rfc1123_dayname(4) -> "Thu";
+rfc1123_dayname(5) -> "Fri";
+rfc1123_dayname(6) -> "Sat";
+rfc1123_dayname(7) -> "Sun".
+
+-spec rfc1123_monthname(1..12) -> string().
+rfc1123_monthname(1) -> "Jan";
+rfc1123_monthname(2) -> "Feb";
+rfc1123_monthname(3) -> "Mar";
+rfc1123_monthname(4) -> "Apr";
+rfc1123_monthname(5) -> "May";
+rfc1123_monthname(6) -> "Jun";
+rfc1123_monthname(7) -> "Jul";
+rfc1123_monthname(8) -> "Aug";
+rfc1123_monthname(9) -> "Sep";
+rfc1123_monthname(10) -> "Oct";
+rfc1123_monthname(11) -> "Nov";
+rfc1123_monthname(12) -> "Dec".
+
+-ifdef(TEST).
+rfc1123_dayname_test() ->
+  ?assertEqual(rfc1123_dayname(1), "Mon"),
+  ?assertEqual(rfc1123_dayname(2), "Tue"),
+  ?assertEqual(rfc1123_dayname(3), "Wed"),
+  ?assertEqual(rfc1123_dayname(4), "Thu"),
+  ?assertEqual(rfc1123_dayname(5), "Fri"),
+  ?assertEqual(rfc1123_dayname(6), "Sat"),
+  ?assertEqual(rfc1123_dayname(7), "Sun").
+
+rfc1123_monthname_test() ->
+  ?assertEqual(rfc1123_monthname(1), "Jan"),
+  ?assertEqual(rfc1123_monthname(2), "Feb"),
+  ?assertEqual(rfc1123_monthname(3), "Mar"),
+  ?assertEqual(rfc1123_monthname(4), "Apr"),
+  ?assertEqual(rfc1123_monthname(5), "May"),
+  ?assertEqual(rfc1123_monthname(6), "Jun"),
+  ?assertEqual(rfc1123_monthname(7), "Jul"),
+  ?assertEqual(rfc1123_monthname(8), "Aug"),
+  ?assertEqual(rfc1123_monthname(9), "Sep"),
+  ?assertEqual(rfc1123_monthname(10), "Oct"),
+  ?assertEqual(rfc1123_monthname(11), "Nov"),
+  ?assertEqual(rfc1123_monthname(12), "Dec").
+-endif.

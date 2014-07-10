@@ -40,3 +40,9 @@ timestamp_distance_test() ->
   ?assert(noesis_datetime:timestamp_distance(eq, 1357084798, 1357091998, {2, hours})),
   ?assert(noesis_datetime:timestamp_distance(eq, 1357084798, 1359503998, {4, weeks})),
   ?assert(noesis_datetime:timestamp_distance(gt, 1357084798, 1359503999, {4, weeks})).
+
+rfc1123_test() ->
+  TimeA = noesis_datetime:rfc1123(),
+  ok = timer:sleep(1100),
+  TimeB = noesis_datetime:rfc1123(),
+  ?assert(TimeA =/= TimeB).
