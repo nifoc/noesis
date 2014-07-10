@@ -93,7 +93,9 @@ rfc1123() ->
 -spec rfc1123(calendar:datetime()) -> binary().
 rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
   Weekday = calendar:day_of_the_week({Year, Month, Day}),
-  Formatted = io_lib:format("~s, ~2..0w ~s ~w ~2..0w:~2..0w:~2..0w GMT", [rfc1123_dayname(Weekday), Day, rfc1123_monthname(Month), Year, Hour, Minute, Second]),
+  Dayname = rfc1123_dayname(Weekday),
+  Monthname = rfc1123_monthname(Month),
+  Formatted = io_lib:format("~s, ~2..0w ~s ~w ~2..0w:~2..0w:~2..0w GMT", [Dayname, Day, Monthname, Year, Hour, Minute, Second]),
   unicode:characters_to_binary(Formatted).
 
 % Private
