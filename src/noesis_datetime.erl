@@ -17,11 +17,15 @@
 
 % Types
 
+-type range_seconds() :: {non_neg_integer(), second} | {non_neg_integer(), seconds}.
+-type range_minutes() :: {non_neg_integer(), minute} | {non_neg_integer(), minutes}.
+-type range_hours() :: {non_neg_integer(), hour} | {non_neg_integer(), hours}.
 -type range_days() :: {non_neg_integer(), day} | {non_neg_integer(), days}.
+-type range_weeks() :: {non_neg_integer(), week} | {non_neg_integer(), weeks}.
 
 -type timestamp() :: non_neg_integer().
 -type comparison_op() :: lt | lte | eq | gt | gte.
--type range() :: range_days().
+-type range() :: range_seconds() | range_minutes() | range_hours() | range_days() | range_weeks().
 
 -export_type([
   timestamp/0,
@@ -60,7 +64,11 @@ local_timestamp() ->
 %      Greater than: `gt'<br />
 %      Greater than or equal to: `gte'<br /><br />
 %      <strong>Ranges</strong><br />
-%      `{X, days}'
+%      `{X, seconds}'<br />
+%      `{X, minutes}'<br />
+%      `{X, hours}'<br />
+%      `{X, days}'<br />
+%      `{X, weeks}'
 -spec timestamp_distance(comparison_op(), timestamp(), timestamp(), range()) -> boolean().
 timestamp_distance(Op, A, B, Range) when A > B ->
   timestamp_distance(Op, B, A, Range);
@@ -72,7 +80,11 @@ timestamp_distance(Op, A, B, Range) ->
 % Private
 
 -spec range_to_seconds(range()) -> non_neg_integer().
-range_to_seconds({X, R}) when R =:= days orelse R =:= day -> 60 * 60 * 24 * X.
+range_to_seconds({X, R}) when R =:= seconds orelse R =:= second -> X;
+range_to_seconds({X, R}) when R =:= minutes orelse R =:= minute -> 60 * X;
+range_to_seconds({X, R}) when R =:= hours orelse R =:= hour -> 60 * 60 * X;
+range_to_seconds({X, R}) when R =:= days orelse R =:= day -> 60 * 60 * 24 * X;
+range_to_seconds({X, R}) when R =:= weeks orelse R =:= week -> 60 * 60 * 24 * 7 * X.
 
 -spec compare_timestamps(comparison_op(), non_neg_integer(), non_neg_integer()) -> boolean().
 compare_timestamps(lt, Diff, Seconds) -> Diff < Seconds;

@@ -34,4 +34,9 @@ timestamp_distance_test() ->
   ?assert(noesis_datetime:timestamp_distance(eq, 1357084799, 1357171199, {1, day})),
   ?assertNot(noesis_datetime:timestamp_distance(eq, 1357084799, 1357171198, {1, day})),
   ?assert(noesis_datetime:timestamp_distance(lt, 1357084799, 1357171198, {1, day})),
-  ?assert(noesis_datetime:timestamp_distance(gt, 1357084799, 1357171200, {1, day})).
+  ?assert(noesis_datetime:timestamp_distance(gt, 1357084799, 1357171200, {1, day})),
+  ?assert(noesis_datetime:timestamp_distance(eq, 1357084798, 1357084799, {1, second})),
+  ?assert(noesis_datetime:timestamp_distance(eq, 1357084798, 1357084858, {1, minute})),
+  ?assert(noesis_datetime:timestamp_distance(eq, 1357084798, 1357091998, {2, hours})),
+  ?assert(noesis_datetime:timestamp_distance(eq, 1357084798, 1359503998, {4, weeks})),
+  ?assert(noesis_datetime:timestamp_distance(gt, 1357084798, 1359503999, {4, weeks})).
