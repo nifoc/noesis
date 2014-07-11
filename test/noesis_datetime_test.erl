@@ -46,3 +46,8 @@ rfc1123_test() ->
   ok = timer:sleep(1100),
   TimeB = noesis_datetime:rfc1123(),
   ?assert(TimeA =/= TimeB).
+
+parse_rfc1123_test() ->
+  Time = calendar:universal_time(),
+  Rfc1123 = noesis_datetime:rfc1123(Time),
+  ?assertEqual(Time, noesis_datetime:parse_rfc1123(Rfc1123)).

@@ -43,7 +43,8 @@
   local_timestamp/0,
   timestamp_distance/4,
   rfc1123/0,
-  rfc1123/1
+  rfc1123/1,
+  parse_rfc1123/1
 ]).
 
 % API
@@ -84,19 +85,29 @@ timestamp_distance(Op, A, B, Range) ->
   compare_timestamps(Op, Diff, Seconds).
 
 % @doc Returns the current date and time (UTC) according to RFC 1123.
--spec rfc1123() -> binary().
+-spec rfc1123() -> <<_:232>>.
 rfc1123() ->
   Now = calendar:universal_time(),
   rfc1123(Now).
 
 % @doc Formats any `calendar:datetime()' (UTC) according to RFC 1123.
--spec rfc1123(calendar:datetime()) -> binary().
+-spec rfc1123(calendar:datetime()) -> <<_:232>>.
 rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
   Weekday = calendar:day_of_the_week({Year, Month, Day}),
   Dayname = rfc1123_dayname(Weekday),
   Monthname = rfc1123_monthname(Month),
   Formatted = io_lib:format("~s, ~2..0w ~s ~w ~2..0w:~2..0w:~2..0w GMT", [Dayname, Day, Monthname, Year, Hour, Minute, Second]),
   unicode:characters_to_binary(Formatted).
+
+-spec parse_rfc1123(<<_:232>>) -> calendar:datetime().
+parse_rfc1123(<<_Dayname:3/binary, ", ", Day:2/binary, " ", Monthname:3/binary, " ", Year:4/binary, " ", Hour:2/binary, ":", Minute:2/binary, ":", Second:2/binary, " GMT">>) ->
+  Year2 = binary_to_integer(Year),
+  Month = rfc1123_monthnum(Monthname),
+  Day2 = binary_to_integer(Day),
+  Hour2 = binary_to_integer(Hour),
+  Minute2 = binary_to_integer(Minute),
+  Second2 = binary_to_integer(Second),
+  {{Year2, Month, Day2}, {Hour2, Minute2, Second2}}.
 
 % Private
 
@@ -137,6 +148,20 @@ rfc1123_monthname(10) -> "Oct";
 rfc1123_monthname(11) -> "Nov";
 rfc1123_monthname(12) -> "Dec".
 
+-spec rfc1123_monthnum(binary()) -> 1..12.
+rfc1123_monthnum(<<"Jan">>) -> 1;
+rfc1123_monthnum(<<"Feb">>) -> 2;
+rfc1123_monthnum(<<"Mar">>) -> 3;
+rfc1123_monthnum(<<"Apr">>) -> 4;
+rfc1123_monthnum(<<"May">>) -> 5;
+rfc1123_monthnum(<<"Jun">>) -> 6;
+rfc1123_monthnum(<<"Jul">>) -> 7;
+rfc1123_monthnum(<<"Aug">>) -> 8;
+rfc1123_monthnum(<<"Sep">>) -> 9;
+rfc1123_monthnum(<<"Oct">>) -> 10;
+rfc1123_monthnum(<<"Nov">>) -> 11;
+rfc1123_monthnum(<<"Dec">>) -> 12.
+
 -ifdef(TEST).
 rfc1123_dayname_test() ->
   ?assertEqual(rfc1123_dayname(1), "Mon"),
@@ -160,4 +185,18 @@ rfc1123_monthname_test() ->
   ?assertEqual(rfc1123_monthname(10), "Oct"),
   ?assertEqual(rfc1123_monthname(11), "Nov"),
   ?assertEqual(rfc1123_monthname(12), "Dec").
+
+rfc1123_monthnum_test() ->
+  ?assertEqual(rfc1123_monthnum(<<"Jan">>), 1),
+  ?assertEqual(rfc1123_monthnum(<<"Feb">>), 2),
+  ?assertEqual(rfc1123_monthnum(<<"Mar">>), 3),
+  ?assertEqual(rfc1123_monthnum(<<"Apr">>), 4),
+  ?assertEqual(rfc1123_monthnum(<<"May">>), 5),
+  ?assertEqual(rfc1123_monthnum(<<"Jun">>), 6),
+  ?assertEqual(rfc1123_monthnum(<<"Jul">>), 7),
+  ?assertEqual(rfc1123_monthnum(<<"Aug">>), 8),
+  ?assertEqual(rfc1123_monthnum(<<"Sep">>), 9),
+  ?assertEqual(rfc1123_monthnum(<<"Oct">>), 10),
+  ?assertEqual(rfc1123_monthnum(<<"Nov">>), 11),
+  ?assertEqual(rfc1123_monthnum(<<"Dec">>), 12).
 -endif.
