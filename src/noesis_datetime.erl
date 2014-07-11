@@ -28,11 +28,13 @@
 -type range_weeks() :: {non_neg_integer(), week} | {non_neg_integer(), weeks}.
 
 -type timestamp() :: non_neg_integer().
+-type rfc1123() :: <<_:232>>.
 -type comparison_op() :: lt | lte | eq | gt | gte.
 -type range() :: range_seconds() | range_minutes() | range_hours() | range_days() | range_weeks().
 
 -export_type([
   timestamp/0,
+  rfc1123/0,
   comparison_op/0,
   range/0
 ]).
@@ -85,13 +87,13 @@ timestamp_distance(Op, A, B, Range) ->
   compare_timestamps(Op, Diff, Seconds).
 
 % @doc Returns the current date and time (UTC) according to RFC 1123.
--spec rfc1123() -> <<_:232>>.
+-spec rfc1123() -> rfc1123().
 rfc1123() ->
   Now = calendar:universal_time(),
   rfc1123(Now).
 
 % @doc Formats any `calendar:datetime()' (UTC) according to RFC 1123.
--spec rfc1123(calendar:datetime()) -> <<_:232>>.
+-spec rfc1123(calendar:datetime()) -> rfc1123().
 rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
   Weekday = calendar:day_of_the_week({Year, Month, Day}),
   Dayname = rfc1123_dayname(Weekday),
@@ -99,7 +101,7 @@ rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
   Formatted = io_lib:format("~s, ~2..0w ~s ~w ~2..0w:~2..0w:~2..0w GMT", [Dayname, Day, Monthname, Year, Hour, Minute, Second]),
   unicode:characters_to_binary(Formatted).
 
--spec parse_rfc1123(<<_:232>>) -> calendar:datetime().
+-spec parse_rfc1123(rfc1123()) -> calendar:datetime().
 parse_rfc1123(<<_Dayname:3/binary, ", ", Day:2/binary, " ", Monthname:3/binary, " ", Year:4/binary, " ", Hour:2/binary, ":", Minute:2/binary, ":", Second:2/binary, " GMT">>) ->
   Year2 = binary_to_integer(Year),
   Month = rfc1123_monthnum(Monthname),
