@@ -86,13 +86,17 @@ timestamp_distance(Op, A, B, Range) ->
   Diff = B - A,
   compare_timestamps(Op, Diff, Seconds).
 
-% @doc Returns the current date and time (UTC) according to RFC 1123.
+% @doc Returns the current date and time (UTC) according to RFC 1123.<br />
+%      This function has only been tested under very specific use-cases and might not work
+%      under all circumstances.
 -spec rfc1123() -> rfc1123().
 rfc1123() ->
   Now = calendar:universal_time(),
   rfc1123(Now).
 
-% @doc Formats any `calendar:datetime()' (UTC) according to RFC 1123.
+% @doc Formats any `calendar:datetime()' (UTC) according to RFC 1123.<br />
+%      This function has only been tested under very specific use-cases and might not work
+%      under all circumstances.
 -spec rfc1123(calendar:datetime()) -> rfc1123().
 rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
   Weekday = calendar:day_of_the_week({Year, Month, Day}),
@@ -101,7 +105,9 @@ rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
   Formatted = io_lib:format("~s, ~2..0w ~s ~w ~2..0w:~2..0w:~2..0w GMT", [Dayname, Day, Monthname, Year, Hour, Minute, Second]),
   unicode:characters_to_binary(Formatted).
 
-% @doc Parses a RFC 1123 binary string into `calendar:datetime()'.
+% @doc Parses a RFC 1123 binary string into `calendar:datetime()'.<br />
+%      This function has only been tested under very specific use-cases and might not work
+%      under all circumstances.
 -spec parse_rfc1123(rfc1123()) -> calendar:datetime().
 parse_rfc1123(<<_Dayname:3/binary, ", ", Day:2/binary, " ", Monthname:3/binary, " ", Year:4/binary, " ", Hour:2/binary, ":", Minute:2/binary, ":", Second:2/binary, " GMT">>) ->
   Year2 = binary_to_integer(Year),
