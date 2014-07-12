@@ -88,16 +88,14 @@ timestamp_distance(Op, A, B, Range) ->
   compare_timestamps(Op, Diff, Seconds).
 
 % @doc Returns the current date and time (UTC) according to RFC 1123.<br /><br />
-%      This function has only been tested under very specific use-cases and might not work
-%      under all circumstances.
+%      This function has only been tested under very specific circumstances.
 -spec rfc1123() -> rfc1123().
 rfc1123() ->
   Now = calendar:universal_time(),
   rfc1123(Now).
 
 % @doc Formats any `calendar:datetime()' (UTC) according to RFC 1123.<br /><br />
-%      This function has only been tested under very specific use-cases and might not work
-%      under all circumstances.
+%      This function has only been tested under very specific circumstances.
 -spec rfc1123(calendar:datetime()) -> rfc1123().
 rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
   Weekday = calendar:day_of_the_week({Year, Month, Day}),
@@ -107,8 +105,7 @@ rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
   unicode:characters_to_binary(Formatted).
 
 % @doc Parses a RFC 1123 binary string into `calendar:datetime()'.<br /><br />
-%      This function has only been tested under very specific use-cases and might not work
-%      under all circumstances.
+%      This function has only been tested under very specific circumstances.
 -spec parse_rfc1123(rfc1123()) -> calendar:datetime().
 parse_rfc1123(<<_DName:3/binary, ", ", D:2/binary, " ", MName:3/binary, " ", Y:4/binary, " ", H:2/binary, ":", M:2/binary, ":", S:2/binary, " GMT">>) ->
   Year = binary_to_integer(Y),
@@ -121,8 +118,7 @@ parse_rfc1123(<<_DName:3/binary, ", ", D:2/binary, " ", MName:3/binary, " ", Y:4
 
 % @doc Parses a ISO 8601 binary string into `calendar:datetime()'.<br />
 %      Timezones are <strong>not</strong> handled at all.<br /><br />
-%      This function has only been tested under very specific use-cases and might not work
-%      under all circumstances.
+%      This function has only been tested under very specific circumstances.
 -spec parse_iso8601(binary()) -> calendar:datetime().
 parse_iso8601(<<Y:4/binary, "-", Mo:2/binary, "-", D:2/binary, _Sep:1/binary, H:2/binary, ":", Mi:2/binary, ":", S:2/binary, _Rest/binary>>) ->
   Year = binary_to_integer(Y),
