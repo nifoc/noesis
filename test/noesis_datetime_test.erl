@@ -51,3 +51,10 @@ parse_rfc1123_test() ->
   Time = calendar:universal_time(),
   Rfc1123 = noesis_datetime:rfc1123(Time),
   ?assertEqual(Time, noesis_datetime:parse_rfc1123(Rfc1123)).
+
+parse_iso8601_test() ->
+  TimeA = <<"2014-07-12T04:24:26Z">>,
+  TimeB = <<"2014-07-12 04:24:26">>,
+  ?assertEqual({{2014, 7, 12}, {4, 24, 26}}, noesis_datetime:parse_iso8601(TimeA)),
+  ?assertEqual({{2014, 7, 12}, {4, 24, 26}}, noesis_datetime:parse_iso8601(TimeB)),
+  ?assertEqual(noesis_datetime:parse_iso8601(TimeA), noesis_datetime:parse_iso8601(TimeB)).

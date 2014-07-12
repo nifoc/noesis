@@ -46,7 +46,8 @@
   timestamp_distance/4,
   rfc1123/0,
   rfc1123/1,
-  parse_rfc1123/1
+  parse_rfc1123/1,
+  parse_iso8601/1
 ]).
 
 % API
@@ -86,7 +87,7 @@ timestamp_distance(Op, A, B, Range) ->
   Diff = B - A,
   compare_timestamps(Op, Diff, Seconds).
 
-% @doc Returns the current date and time (UTC) according to RFC 1123.<br />
+% @doc Returns the current date and time (UTC) according to RFC 1123.<br /><br />
 %      This function has only been tested under very specific use-cases and might not work
 %      under all circumstances.
 -spec rfc1123() -> rfc1123().
@@ -94,7 +95,7 @@ rfc1123() ->
   Now = calendar:universal_time(),
   rfc1123(Now).
 
-% @doc Formats any `calendar:datetime()' (UTC) according to RFC 1123.<br />
+% @doc Formats any `calendar:datetime()' (UTC) according to RFC 1123.<br /><br />
 %      This function has only been tested under very specific use-cases and might not work
 %      under all circumstances.
 -spec rfc1123(calendar:datetime()) -> rfc1123().
@@ -105,18 +106,32 @@ rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
   Formatted = io_lib:format("~s, ~2..0w ~s ~w ~2..0w:~2..0w:~2..0w GMT", [Dayname, Day, Monthname, Year, Hour, Minute, Second]),
   unicode:characters_to_binary(Formatted).
 
-% @doc Parses a RFC 1123 binary string into `calendar:datetime()'.<br />
+% @doc Parses a RFC 1123 binary string into `calendar:datetime()'.<br /><br />
 %      This function has only been tested under very specific use-cases and might not work
 %      under all circumstances.
 -spec parse_rfc1123(rfc1123()) -> calendar:datetime().
-parse_rfc1123(<<_Dayname:3/binary, ", ", Day:2/binary, " ", Monthname:3/binary, " ", Year:4/binary, " ", Hour:2/binary, ":", Minute:2/binary, ":", Second:2/binary, " GMT">>) ->
-  Year2 = binary_to_integer(Year),
-  Month = rfc1123_monthnum(Monthname),
-  Day2 = binary_to_integer(Day),
-  Hour2 = binary_to_integer(Hour),
-  Minute2 = binary_to_integer(Minute),
-  Second2 = binary_to_integer(Second),
-  {{Year2, Month, Day2}, {Hour2, Minute2, Second2}}.
+parse_rfc1123(<<_DName:3/binary, ", ", D:2/binary, " ", MName:3/binary, " ", Y:4/binary, " ", H:2/binary, ":", M:2/binary, ":", S:2/binary, " GMT">>) ->
+  Year = binary_to_integer(Y),
+  Month = rfc1123_monthnum(MName),
+  Day = binary_to_integer(D),
+  Hour = binary_to_integer(H),
+  Minute = binary_to_integer(M),
+  Second = binary_to_integer(S),
+  {{Year, Month, Day}, {Hour, Minute, Second}}.
+
+% @doc Parses a ISO 8601 binary string into `calendar:datetime()'.<br />
+%      Timezones are <strong>not</strong> handled at all.<br /><br />
+%      This function has only been tested under very specific use-cases and might not work
+%      under all circumstances.
+-spec parse_iso8601(binary()) -> calendar:datetime().
+parse_iso8601(<<Y:4/binary, "-", Mo:2/binary, "-", D:2/binary, _Sep:1/binary, H:2/binary, ":", Mi:2/binary, ":", S:2/binary, _Rest/binary>>) ->
+  Year = binary_to_integer(Y),
+  Month = binary_to_integer(Mo),
+  Day = binary_to_integer(D),
+  Hour = binary_to_integer(H),
+  Minute = binary_to_integer(Mi),
+  Second = binary_to_integer(S),
+  {{Year, Month, Day}, {Hour, Minute, Second}}.
 
 % Private
 
