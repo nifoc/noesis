@@ -26,6 +26,9 @@ local_timestamp_test() ->
   TimeB = noesis_datetime:local_timestamp(),
   ?assert(TimeA < TimeB).
 
+timestamp_to_datetime_test() ->
+  ?assertEqual({{2014, 7, 12},{22, 7, 28}}, noesis_datetime:timestamp_to_datetime(1405202848)).
+
 timestamp_distance_test() ->
   ?assert(noesis_datetime:timestamp_distance(gte, 1357084799, 1357171199, {1, day})),
   ?assert(noesis_datetime:timestamp_distance(gte, 1357171199, 1357084799, {1, day})),
@@ -47,14 +50,14 @@ rfc1123_test() ->
   TimeB = noesis_datetime:rfc1123(),
   ?assert(TimeA =/= TimeB).
 
-parse_rfc1123_test() ->
+rfc1123_to_datetime_test() ->
   Time = calendar:universal_time(),
   Rfc1123 = noesis_datetime:rfc1123(Time),
-  ?assertEqual(Time, noesis_datetime:parse_rfc1123(Rfc1123)).
+  ?assertEqual(Time, noesis_datetime:rfc1123_to_datetime(Rfc1123)).
 
-parse_iso8601_test() ->
+iso8601_to_datetime_test() ->
   TimeA = <<"2014-07-12T04:24:26Z">>,
   TimeB = <<"2014-07-12 04:24:26">>,
-  ?assertEqual({{2014, 7, 12}, {4, 24, 26}}, noesis_datetime:parse_iso8601(TimeA)),
-  ?assertEqual({{2014, 7, 12}, {4, 24, 26}}, noesis_datetime:parse_iso8601(TimeB)),
-  ?assertEqual(noesis_datetime:parse_iso8601(TimeA), noesis_datetime:parse_iso8601(TimeB)).
+  ?assertEqual({{2014, 7, 12}, {4, 24, 26}}, noesis_datetime:iso8601_to_datetime(TimeA)),
+  ?assertEqual({{2014, 7, 12}, {4, 24, 26}}, noesis_datetime:iso8601_to_datetime(TimeB)),
+  ?assertEqual(noesis_datetime:iso8601_to_datetime(TimeA), noesis_datetime:iso8601_to_datetime(TimeB)).

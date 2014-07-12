@@ -43,11 +43,12 @@
 -export([
   timestamp/0,
   local_timestamp/0,
+  timestamp_to_datetime/1,
   timestamp_distance/4,
   rfc1123/0,
   rfc1123/1,
-  parse_rfc1123/1,
-  parse_iso8601/1
+  rfc1123_to_datetime/1,
+  iso8601_to_datetime/1
 ]).
 
 % API
@@ -65,6 +66,13 @@ local_timestamp() ->
   UnixEpoch = 62167219200,
   LocalEpoch = calendar:datetime_to_gregorian_seconds(Now),
   LocalEpoch - UnixEpoch.
+
+% @doc Converts a Unix timestamp to `calendar:datetime()'.
+-spec timestamp_to_datetime(timestamp()) -> calendar:datetime().
+timestamp_to_datetime(Timestamp) ->
+  UnixEpoch = 62167219200,
+  Seconds = UnixEpoch + Timestamp,
+  calendar:gregorian_seconds_to_datetime(Seconds).
 
 % @doc Takes two Unix timestamps and compares their distance to a given range.<br /><br />
 %      <strong>Comparion operations</strong><br />
@@ -106,8 +114,8 @@ rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
 
 % @doc Parses a RFC 1123 binary string into `calendar:datetime()'.<br /><br />
 %      This function has only been tested under very specific circumstances.
--spec parse_rfc1123(rfc1123()) -> calendar:datetime().
-parse_rfc1123(<<_DName:3/binary, ", ", D:2/binary, " ", MName:3/binary, " ", Y:4/binary, " ", H:2/binary, ":", M:2/binary, ":", S:2/binary, " GMT">>) ->
+-spec rfc1123_to_datetime(rfc1123()) -> calendar:datetime().
+rfc1123_to_datetime(<<_DName:3/binary, ", ", D:2/binary, " ", MName:3/binary, " ", Y:4/binary, " ", H:2/binary, ":", M:2/binary, ":", S:2/binary, " GMT">>) ->
   Year = binary_to_integer(Y),
   Month = rfc1123_monthnum(MName),
   Day = binary_to_integer(D),
@@ -119,8 +127,8 @@ parse_rfc1123(<<_DName:3/binary, ", ", D:2/binary, " ", MName:3/binary, " ", Y:4
 % @doc Parses a ISO 8601 binary string into `calendar:datetime()'.<br />
 %      Timezones are <strong>not</strong> handled at all.<br /><br />
 %      This function has only been tested under very specific circumstances.
--spec parse_iso8601(binary()) -> calendar:datetime().
-parse_iso8601(<<Y:4/binary, "-", Mo:2/binary, "-", D:2/binary, _Sep:1/binary, H:2/binary, ":", Mi:2/binary, ":", S:2/binary, _Rest/binary>>) ->
+-spec iso8601_to_datetime(binary()) -> calendar:datetime().
+iso8601_to_datetime(<<Y:4/binary, "-", Mo:2/binary, "-", D:2/binary, _Sep:1/binary, H:2/binary, ":", Mi:2/binary, ":", S:2/binary, _Rest/binary>>) ->
   Year = binary_to_integer(Y),
   Month = binary_to_integer(Mo),
   Day = binary_to_integer(D),
