@@ -101,6 +101,7 @@ rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
   Formatted = io_lib:format("~s, ~2..0w ~s ~w ~2..0w:~2..0w:~2..0w GMT", [Dayname, Day, Monthname, Year, Hour, Minute, Second]),
   unicode:characters_to_binary(Formatted).
 
+% @doc Parses a RFC 1123 binary string into `calendar:datetime()'.
 -spec parse_rfc1123(rfc1123()) -> calendar:datetime().
 parse_rfc1123(<<_Dayname:3/binary, ", ", Day:2/binary, " ", Monthname:3/binary, " ", Year:4/binary, " ", Hour:2/binary, ":", Minute:2/binary, ":", Second:2/binary, " GMT">>) ->
   Year2 = binary_to_integer(Year),
