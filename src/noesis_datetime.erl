@@ -19,6 +19,8 @@
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
+-define(UNIX_EPOCH, 62167219200).
+
 % Types
 
 -type range_seconds() :: {non_neg_integer(), second} | {non_neg_integer(), seconds}.
@@ -66,9 +68,8 @@ timestamp() ->
 % @doc Calculates the Unix timestamp for any `calendar:datetime1970()'.
 -spec timestamp(calendar:datetime1970()) -> timestamp().
 timestamp(DateTime) ->
-  UnixEpoch = 62167219200,
   LocalEpoch = calendar:datetime_to_gregorian_seconds(DateTime),
-  LocalEpoch - UnixEpoch.
+  LocalEpoch - ?UNIX_EPOCH.
 
 % @doc Returns the current Unix timestamp in the timezone of the system.
 -spec local_timestamp() -> timestamp().
@@ -79,8 +80,7 @@ local_timestamp() ->
 % @doc Converts a Unix timestamp to `calendar:datetime()'.
 -spec timestamp_to_datetime(timestamp()) -> calendar:datetime().
 timestamp_to_datetime(Timestamp) ->
-  UnixEpoch = 62167219200,
-  Seconds = UnixEpoch + Timestamp,
+  Seconds = ?UNIX_EPOCH + Timestamp,
   calendar:gregorian_seconds_to_datetime(Seconds).
 
 % @doc Converts a Unix timestamp to a RFC 1123 formatted binary string.
