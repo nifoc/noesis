@@ -17,7 +17,8 @@ timestamp_test() ->
   TimeA = noesis_datetime:timestamp(),
   ok = timer:sleep(1100),
   TimeB = noesis_datetime:timestamp(),
-  ?assert(TimeA < TimeB).
+  ?assert(TimeA < TimeB),
+  ?assertEqual(1405202838, noesis_datetime:timestamp({{2014, 7, 12},{22, 7, 18}})).
 
 local_timestamp_test() ->
   ?assert(noesis_datetime:local_timestamp() > 0),
@@ -28,6 +29,9 @@ local_timestamp_test() ->
 
 timestamp_to_datetime_test() ->
   ?assertEqual({{2014, 7, 12},{22, 7, 28}}, noesis_datetime:timestamp_to_datetime(1405202848)).
+
+timestamp_to_rfc1123_test() ->
+  ?assertEqual(<<"Sun, 13 Jul 2014 17:24:08 GMT">>, noesis_datetime:timestamp_to_rfc1123(1405272248)).
 
 timestamp_distance_test() ->
   ?assert(noesis_datetime:timestamp_distance(gte, 1357084799, 1357171199, {1, day})),
@@ -53,7 +57,11 @@ rfc1123_test() ->
 rfc1123_to_datetime_test() ->
   Time = calendar:universal_time(),
   Rfc1123 = noesis_datetime:rfc1123(Time),
-  ?assertEqual(Time, noesis_datetime:rfc1123_to_datetime(Rfc1123)).
+  ?assertEqual(Time, noesis_datetime:rfc1123_to_datetime(Rfc1123)),
+  ?assertEqual({{2014, 7, 13}, {17, 24, 8}}, noesis_datetime:rfc1123_to_datetime(<<"Sun, 13 Jul 2014 17:24:08 GMT">>)).
+
+rfc1123_to_timestamp_test() ->
+  ?assertEqual(1405272248, noesis_datetime:rfc1123_to_timestamp(<<"Sun, 13 Jul 2014 17:24:08 GMT">>)).
 
 iso8601_to_datetime_test() ->
   TimeA = <<"2014-07-12T04:24:26Z">>,
@@ -61,3 +69,6 @@ iso8601_to_datetime_test() ->
   ?assertEqual({{2014, 7, 12}, {4, 24, 26}}, noesis_datetime:iso8601_to_datetime(TimeA)),
   ?assertEqual({{2014, 7, 12}, {4, 24, 26}}, noesis_datetime:iso8601_to_datetime(TimeB)),
   ?assertEqual(noesis_datetime:iso8601_to_datetime(TimeA), noesis_datetime:iso8601_to_datetime(TimeB)).
+
+iso8601_to_timestamp_test() ->
+  ?assertEqual(1405272248, noesis_datetime:iso8601_to_timestamp(<<"2014-07-13T17:24:08Z">>)).

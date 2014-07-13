@@ -42,13 +42,17 @@
 % API
 -export([
   timestamp/0,
+  timestamp/1,
   local_timestamp/0,
   timestamp_to_datetime/1,
+  timestamp_to_rfc1123/1,
   timestamp_distance/4,
   rfc1123/0,
   rfc1123/1,
   rfc1123_to_datetime/1,
-  iso8601_to_datetime/1
+  rfc1123_to_timestamp/1,
+  iso8601_to_datetime/1,
+  iso8601_to_timestamp/1
 ]).
 
 % API
@@ -59,13 +63,18 @@ timestamp() ->
   {Mega, Secs, _} = os:timestamp(),
   Mega * 1000000 + Secs.
 
+% @doc Calculates the Unix timestamp for any `calendar:datetime1970()'.
+-spec timestamp(calendar:datetime1970()) -> timestamp().
+timestamp(DateTime) ->
+  UnixEpoch = 62167219200,
+  LocalEpoch = calendar:datetime_to_gregorian_seconds(DateTime),
+  LocalEpoch - UnixEpoch.
+
 % @doc Returns the current Unix timestamp in the timezone of the system.
 -spec local_timestamp() -> timestamp().
 local_timestamp() ->
   Now = calendar:local_time(),
-  UnixEpoch = 62167219200,
-  LocalEpoch = calendar:datetime_to_gregorian_seconds(Now),
-  LocalEpoch - UnixEpoch.
+  timestamp(Now).
 
 % @doc Converts a Unix timestamp to `calendar:datetime()'.
 -spec timestamp_to_datetime(timestamp()) -> calendar:datetime().
@@ -73,6 +82,12 @@ timestamp_to_datetime(Timestamp) ->
   UnixEpoch = 62167219200,
   Seconds = UnixEpoch + Timestamp,
   calendar:gregorian_seconds_to_datetime(Seconds).
+
+% @doc Converts a Unix timestamp to a RFC 1123 formatted binary string.
+-spec timestamp_to_rfc1123(timestamp()) -> rfc1123().
+timestamp_to_rfc1123(Timestamp) ->
+  DateTime = timestamp_to_datetime(Timestamp),
+  rfc1123(DateTime).
 
 % @doc Takes two Unix timestamps and compares their distance to a given range.<br /><br />
 %      <strong>Comparion operations</strong><br />
@@ -124,7 +139,14 @@ rfc1123_to_datetime(<<_DName:3/binary, ", ", D:2/binary, " ", MName:3/binary, " 
   Second = binary_to_integer(S),
   {{Year, Month, Day}, {Hour, Minute, Second}}.
 
-% @doc Parses a ISO 8601 binary string into `calendar:datetime()'.<br />
+% @doc Parses a RFC 1123 binary string into a Unix timestamp.<br /><br />
+%      This function has only been tested under very specific circumstances.
+-spec rfc1123_to_timestamp(rfc1123()) -> timestamp().
+rfc1123_to_timestamp(RFC) ->
+  DateTime = rfc1123_to_datetime(RFC),
+  timestamp(DateTime).
+
+% @doc Parses an ISO 8601 binary string into `calendar:datetime()'.<br />
 %      Timezones are <strong>not</strong> handled at all.<br /><br />
 %      This function has only been tested under very specific circumstances.
 -spec iso8601_to_datetime(binary()) -> calendar:datetime().
@@ -136,6 +158,14 @@ iso8601_to_datetime(<<Y:4/binary, "-", Mo:2/binary, "-", D:2/binary, _Sep:1/bina
   Minute = binary_to_integer(Mi),
   Second = binary_to_integer(S),
   {{Year, Month, Day}, {Hour, Minute, Second}}.
+
+% @doc Parses an ISO 8601 binary string into a Unix timestamp.<br />
+%      Timezones are <strong>not</strong> handled at all.<br /><br />
+%      This function has only been tested under very specific circumstances.
+-spec iso8601_to_timestamp(rfc1123()) -> timestamp().
+iso8601_to_timestamp(ISO) ->
+  DateTime = iso8601_to_datetime(ISO),
+  timestamp(DateTime).
 
 % Private
 
