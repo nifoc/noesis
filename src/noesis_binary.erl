@@ -22,6 +22,7 @@
 
 % API
 
+% @doc Joins a list of binaries together using `Sep'.
 -spec join([binary()], binary()) -> binary().
 join([], _Sep) ->
   <<>>;
