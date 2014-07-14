@@ -33,6 +33,9 @@ timestamp_to_datetime_test() ->
 timestamp_to_rfc1123_test() ->
   ?assertEqual(<<"Sun, 13 Jul 2014 17:24:08 GMT">>, noesis_datetime:timestamp_to_rfc1123(1405272248)).
 
+timestamp_to_iso8601_test() ->
+  ?assertEqual(<<"2014-07-13T17:24:08Z">>, noesis_datetime:timestamp_to_iso8601(1405272248)).
+
 timestamp_distance_test() ->
   ?assert(noesis_datetime:timestamp_distance(gte, 1357084799, 1357171199, {1, day})),
   ?assert(noesis_datetime:timestamp_distance(gte, 1357171199, 1357084799, {1, day})),
@@ -62,6 +65,12 @@ rfc1123_to_datetime_test() ->
 
 rfc1123_to_timestamp_test() ->
   ?assertEqual(1405272248, noesis_datetime:rfc1123_to_timestamp(<<"Sun, 13 Jul 2014 17:24:08 GMT">>)).
+
+iso8601_test() ->
+  TimeA = noesis_datetime:iso8601(),
+  ok = timer:sleep(1100),
+  TimeB = noesis_datetime:iso8601(),
+  ?assert(TimeA =/= TimeB).
 
 iso8601_to_datetime_test() ->
   TimeA = <<"2014-07-12T04:24:26Z">>,

@@ -48,11 +48,14 @@
   local_timestamp/0,
   timestamp_to_datetime/1,
   timestamp_to_rfc1123/1,
+  timestamp_to_iso8601/1,
   timestamp_distance/4,
   rfc1123/0,
   rfc1123/1,
   rfc1123_to_datetime/1,
   rfc1123_to_timestamp/1,
+  iso8601/0,
+  iso8601/1,
   iso8601_to_datetime/1,
   iso8601_to_timestamp/1
 ]).
@@ -88,6 +91,12 @@ timestamp_to_datetime(Timestamp) ->
 timestamp_to_rfc1123(Timestamp) ->
   DateTime = timestamp_to_datetime(Timestamp),
   rfc1123(DateTime).
+
+% @doc Converts a Unix timestamp to an ISO 8601 formatted binary string.
+-spec timestamp_to_iso8601(timestamp()) -> rfc1123().
+timestamp_to_iso8601(Timestamp) ->
+  DateTime = timestamp_to_datetime(Timestamp),
+  iso8601(DateTime).
 
 % @doc Takes two Unix timestamps and compares their distance to a given range.<br /><br />
 %      <strong>Comparion operations</strong><br />
@@ -146,6 +155,20 @@ rfc1123_to_timestamp(RFC) ->
   DateTime = rfc1123_to_datetime(RFC),
   timestamp(DateTime).
 
+% @doc Returns the current date and time (UTC) according to ISO 8601.<br /><br />
+%      This function has only been tested under very specific circumstances.
+-spec iso8601() -> binary().
+iso8601() ->
+  Now = calendar:universal_time(),
+  iso8601(Now).
+
+% @doc Formats any `calendar:datetime()' (UTC) according to ISO 8601.<br /><br />
+%      This function has only been tested under very specific circumstances.
+-spec iso8601(calendar:datetime()) -> binary().
+iso8601({{Year, Month, Day}, {Hour, Minute, Second}}) ->
+  Formatted = io_lib:format("~w-~2..0w-~2..0wT~2..0w:~2..0w:~2..0wZ", [Year, Month, Day, Hour, Minute, Second]),
+  unicode:characters_to_binary(Formatted).
+
 % @doc Parses an ISO 8601 binary string into `calendar:datetime()'.<br />
 %      Timezones are <strong>not</strong> handled at all.<br /><br />
 %      This function has only been tested under very specific circumstances.
@@ -162,7 +185,7 @@ iso8601_to_datetime(<<Y:4/binary, "-", Mo:2/binary, "-", D:2/binary, _Sep:1/bina
 % @doc Parses an ISO 8601 binary string into a Unix timestamp.<br />
 %      Timezones are <strong>not</strong> handled at all.<br /><br />
 %      This function has only been tested under very specific circumstances.
--spec iso8601_to_timestamp(rfc1123()) -> timestamp().
+-spec iso8601_to_timestamp(binary()) -> timestamp().
 iso8601_to_timestamp(ISO) ->
   DateTime = iso8601_to_datetime(ISO),
   timestamp(DateTime).
