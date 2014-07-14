@@ -11,22 +11,23 @@
 % @author Daniel Kempkens <daniel@kempkens.io>
 % @copyright {@years} Daniel Kempkens
 % @version {@version}
-% @doc The `noesis_binary' module provides functions for working with binaries.
+% @doc The `noesis_lists' module provides functions for working with lists.
 
--module(noesis_binary).
+-module(noesis_lists).
 
 % API
 -export([
-  join/2
+  group_by/2
 ]).
 
 % API
 
-% @doc Joins a list of binaries together using `Sep'.
--spec join([binary()], binary()) -> binary().
-join([], _Sep) ->
-  <<>>;
-join([Part], _Sep) ->
-  Part;
-join([Head|Tail], Sep) ->
-  lists:foldl(fun(Value, Acc) -> <<Acc/binary, Sep/binary, Value/binary>> end, Head, Tail).
+% @doc Groups a list using a user-supplied function.
+-spec group_by(fun(), list()) -> noesis_proplists:proplist(term(), list()).
+group_by(_Fun, []) ->
+  [];
+group_by(Fun, List) ->
+  Dict = lists:foldl(fun({Key, Value}, Acc) ->
+    dict:append(Key, Value, Acc)
+  end, dict:new(), [{Fun(X), X} || X <- List]),
+  dict:to_list(Dict).

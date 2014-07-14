@@ -21,10 +21,12 @@
 
 -type proplist() :: [{term(), term()}].
 -type proplist(Key) :: [{Key, term()}].
+-type proplist(Key, Value) :: [{Key, Value}].
 
 -export_type([
   proplist/0,
-  proplist/1
+  proplist/1,
+  proplist/2
 ]).
 
 % API

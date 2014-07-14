@@ -7,26 +7,12 @@
 % WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL
 % DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
 % NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
-%
-% @author Daniel Kempkens <daniel@kempkens.io>
-% @copyright {@years} Daniel Kempkens
-% @version {@version}
-% @doc The `noesis_binary' module provides functions for working with binaries.
 
--module(noesis_binary).
+-module(noesis_lists_test).
 
-% API
--export([
-  join/2
-]).
+-include_lib("eunit/include/eunit.hrl").
 
-% API
-
-% @doc Joins a list of binaries together using `Sep'.
--spec join([binary()], binary()) -> binary().
-join([], _Sep) ->
-  <<>>;
-join([Part], _Sep) ->
-  Part;
-join([Head|Tail], Sep) ->
-  lists:foldl(fun(Value, Acc) -> <<Acc/binary, Sep/binary, Value/binary>> end, Head, Tail).
+group_by_test() ->
+  ?assertEqual([{x, [1, 2, 3]}], noesis_lists:group_by(fun(_V) -> x end, [1, 2, 3])),
+  ?assertEqual([{x, [{x, 1}, {x, 2}, {x, 3}]}], noesis_lists:group_by(fun({K, _V}) -> K end, [{x, 1}, {x, 2}, {x, 3}])),
+  ?assertEqual([{x, [{x, 1}, {x, 3}]}, {y, [{y, 2}]}], noesis_lists:group_by(fun({K, _V}) -> K end, [{x, 1}, {y, 2}, {x, 3}])).
