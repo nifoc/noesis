@@ -41,7 +41,6 @@ application(Mod) ->
     _ -> Root
   end.
 
-
 % @doc Returns the path to `priv/' directory of a given module.
 -spec priv(module()) -> string().
 priv(Mod) ->
