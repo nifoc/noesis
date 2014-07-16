@@ -12,8 +12,12 @@
 
 -include_lib("eunit/include/eunit.hrl").
 
-levenshtein_test() ->
-  ?assertEqual(3, noesis_string:levenshtein("kitten", "sitting")),
-  ?assertEqual(2, noesis_string:levenshtein("Tor", "Tier")),
-  ?assertEqual(1, noesis_string:levenshtein("carrrot", "carrot")),
-  ?assertEqual(9, noesis_string:levenshtein("hallo", "informatik")).
+levenshtein_test_() ->
+  {timeout, 15, fun() ->
+    ?assertEqual(3, noesis_string:levenshtein("kitten", "sitting")),
+    ?assertEqual(2, noesis_string:levenshtein("Tor", "Tier")),
+    ?assertEqual(1, noesis_string:levenshtein("carrrot", "carrot")),
+    ?assertEqual(9, noesis_string:levenshtein("hallo", "informatik")),
+    ?assertEqual(7, noesis_string:levenshtein("Germany", "Argentina")),
+    ?assertEqual(6, noesis_string:levenshtein("Cobol", "Erlang"))
+  end}.

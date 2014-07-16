@@ -22,6 +22,7 @@
 
 % API
 
+% @doc Calculates the Levenshtein distance between two strings.
 -spec levenshtein(string(), string()) -> non_neg_integer().
 levenshtein(First, Second) ->
   levenshtein_rec(First, Second).
