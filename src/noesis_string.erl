@@ -30,12 +30,13 @@ levenshtein(First, Second) ->
 % Private
 
 -spec levenshtein_rec(string(), string()) -> non_neg_integer().
-levenshtein_rec(First, First) -> 0;
+levenshtein_rec(Str, Str) -> 0;
 levenshtein_rec([_F], [_S]) -> 1;
 levenshtein_rec([], Second) -> length(Second);
 levenshtein_rec(First, []) -> length(First);
-levenshtein_rec([FH|FT]=First, [SH|ST]=Second) ->
+levenshtein_rec([H|FT], [H|ST]) -> levenshtein_rec(FT, ST);
+levenshtein_rec([_FH|FT]=First, [_SH|ST]=Second) ->
   X = levenshtein_rec(First, ST) + 1,
   Y = levenshtein_rec(FT, Second) + 1,
-  Z = levenshtein_rec(FT, ST) + levenshtein_rec([FH], [SH]),
+  Z = levenshtein_rec(FT, ST) + 1,
   lists:min([X, Y, Z]).

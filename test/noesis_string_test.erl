@@ -13,7 +13,7 @@
 -include_lib("eunit/include/eunit.hrl").
 
 levenshtein_test_() ->
-  {timeout, 15, fun() ->
+  {timeout, 60, fun() ->
     ?assertEqual(3, noesis_string:levenshtein("kitten", "sitting")),
     ?assertEqual(2, noesis_string:levenshtein("Tor", "Tier")),
     ?assertEqual(1, noesis_string:levenshtein("carrrot", "carrot")),
