@@ -15,6 +15,8 @@
 
 -module(noesis_string).
 
+-include("noesis_types.hrl").
+
 % API
 -export([
   levenshtein/2
@@ -31,7 +33,7 @@ levenshtein(First, Second) ->
 
 % Private
 
--spec levenshtein_rec(string(), string(), any()) -> {non_neg_integer(), any()}.
+-spec levenshtein_rec(string(), string(), noesis_dict()) -> {non_neg_integer(), noesis_dict()}.
 levenshtein_rec(Str, Str, Cache) ->
   Cache2 = dict:store({Str, Str}, 0, Cache),
   {0, Cache2};
