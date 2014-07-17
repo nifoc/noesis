@@ -19,5 +19,6 @@ levenshtein_test_() ->
     ?assertEqual(1, noesis_string:levenshtein("carrrot", "carrot")),
     ?assertEqual(9, noesis_string:levenshtein("hallo", "informatik")),
     ?assertEqual(7, noesis_string:levenshtein("Germany", "Argentina")),
-    ?assertEqual(6, noesis_string:levenshtein("Cobol", "Erlang"))
+    ?assertEqual(6, noesis_string:levenshtein("Cobol", "Erlang")),
+    ?assertEqual(19, noesis_string:levenshtein("Ein kleiner Satz", "Dieser Satz ist laenger"))
   end}.
