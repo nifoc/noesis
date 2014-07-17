@@ -27,38 +27,37 @@
 % @doc Calculates the Levenshtein distance between two strings.
 -spec levenshtein(string(), string()) -> non_neg_integer().
 levenshtein(First, Second) ->
-  Cache = dict:new(),
-  {Distance, _Cache2} = levenshtein_rec(First, Second, Cache),
+  {Distance, _Dict} = levenshtein_rec(First, Second, dict:new()),
   Distance.
 
 % Private
 
 -spec levenshtein_rec(string(), string(), noesis_dict()) -> {non_neg_integer(), noesis_dict()}.
-levenshtein_rec(Str, Str, Cache) ->
-  Cache2 = dict:store({Str, Str}, 0, Cache),
-  {0, Cache2};
-levenshtein_rec([FH], [SH], Cache) ->
-  Cache2 = dict:store({FH, SH}, 1, Cache),
-  {1, Cache2};
-levenshtein_rec([], Second, Cache) ->
+levenshtein_rec(Str, Str, Dict) ->
+  Dict2 = dict:store({Str, Str}, 0, Dict),
+  {0, Dict2};
+levenshtein_rec([FH], [SH], Dict) ->
+  Dict2 = dict:store({FH, SH}, 1, Dict),
+  {1, Dict2};
+levenshtein_rec([], Second, Dict) ->
   Length = length(Second),
-  Cache2 = dict:store({[], Second}, Length, Cache),
-  {Length, Cache2};
-levenshtein_rec(First, [], Cache) ->
+  Dict2 = dict:store({[], Second}, Length, Dict),
+  {Length, Dict2};
+levenshtein_rec(First, [], Dict) ->
   Length = length(First),
-  Cache2 = dict:store({First, []}, Length, Cache),
-  {Length, Cache2};
-levenshtein_rec([FH|FT]=First, [SH|ST]=Second, Cache) ->
-  case dict:is_key({First, Second}, Cache) of
+  Dict2 = dict:store({First, []}, Length, Dict),
+  {Length, Dict2};
+levenshtein_rec([FH|FT]=First, [SH|ST]=Second, Dict) ->
+  case dict:is_key({First, Second}, Dict) of
     true ->
-      Length = dict:fetch({First, Second}, Cache),
-      {Length, Cache};
+      Length = dict:fetch({First, Second}, Dict),
+      {Length, Dict};
     false ->
-      {Distance1, Cache2} = levenshtein_rec(First, ST, Cache),
-      {Distance2, Cache3} = levenshtein_rec(FT, Second, Cache2),
-      {Distance3A, Cache4} = levenshtein_rec(FT, ST, Cache3),
-      {Distance3B, Cache5} = levenshtein_rec([FH], [SH], Cache4),
+      {Distance1, Dict2} = levenshtein_rec(First, ST, Dict),
+      {Distance2, Dict3} = levenshtein_rec(FT, Second, Dict2),
+      {Distance3A, Dict4} = levenshtein_rec(FT, ST, Dict3),
+      {Distance3B, Dict5} = levenshtein_rec([FH], [SH], Dict4),
       Length = lists:min([Distance1 + 1, Distance2 + 1, Distance3A + Distance3B]),
-      Cache6 = dict:store({First, Second}, Length, Cache5),
-      {Length, Cache6}
+      Dict6 = dict:store({First, Second}, Length, Dict5),
+      {Length, Dict6}
   end.
