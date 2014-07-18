@@ -22,3 +22,9 @@ levenshtein_test_() ->
     ?assertEqual(6, noesis_string:levenshtein("Cobol", "Erlang")),
     ?assertEqual(19, noesis_string:levenshtein("Ein kleiner Satz", "Dieser Satz ist laenger"))
   end}.
+
+hamming_test() ->
+  ?assertEqual(3, noesis_string:hamming("karolin", "kathrin")),
+  ?assertEqual(3, noesis_string:hamming("karolin", "kerstin")),
+  ?assertEqual(2, noesis_string:hamming("1011101", "1001001")),
+  ?assertEqual(3, noesis_string:hamming("2173896", "2233796")).

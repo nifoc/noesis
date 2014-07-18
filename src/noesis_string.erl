@@ -19,7 +19,8 @@
 
 % API
 -export([
-  levenshtein/2
+  levenshtein/2,
+  hamming/2
 ]).
 
 % API
@@ -29,6 +30,11 @@
 levenshtein(First, Second) ->
   {Distance, _Dict} = levenshtein_rec(First, Second, dict:new()),
   Distance.
+
+% @doc Calculates the Hamming distance between two strings of equal length.
+-spec hamming(string(), string()) -> non_neg_integer().
+hamming(First, Second) when length(First) =:= length(Second) ->
+  hamming_acc(First, Second, 0).
 
 % Private
 
@@ -61,3 +67,8 @@ levenshtein_rec([FH|FT]=First, [SH|ST]=Second, Dict) ->
       Dict6 = dict:store({First, Second}, Length, Dict5),
       {Length, Dict6}
   end.
+
+-spec hamming_acc(string(), string(), non_neg_integer()) -> non_neg_integer().
+hamming_acc([], [], Acc) -> Acc;
+hamming_acc([H|FT], [H|ST], Acc) -> hamming_acc(FT, ST, Acc);
+hamming_acc([_FH|FT], [_SH|ST], Acc) -> hamming_acc(FT, ST, Acc + 1).
