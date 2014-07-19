@@ -17,6 +17,14 @@
 
 -include("noesis_types.hrl").
 
+% Types
+
+-type hexstring() :: string().
+
+-export_type([
+  hexstring/0
+]).
+
 % API
 -export([
   levenshtein/2,

@@ -17,7 +17,8 @@
 
 % API
 -export([
-  join/2
+  join/2,
+  to_hex/1
 ]).
 
 % API
@@ -30,3 +31,9 @@ join([Part], _Sep) ->
   Part;
 join([Head|Tail], Sep) ->
   lists:foldl(fun(Value, Acc) -> <<Acc/binary, Sep/binary, Value/binary>> end, Head, Tail).
+
+% @doc Converts a binary to a hexadecimal string.
+-spec to_hex(binary()) -> noesis_string:hexstring().
+to_hex(Binary) ->
+  Int = binary:decode_unsigned(Binary),
+  string:to_lower(integer_to_list(Int, 16)).

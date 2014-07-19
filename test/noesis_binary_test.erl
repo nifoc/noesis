@@ -21,3 +21,6 @@ join_test() ->
   ?assertEqual(<<"foobarbaz">>, noesis_binary:join([<<"foo">>, <<"bar">>, <<"baz">>], <<>>)),
   ?assertEqual(<<"Hello-this-is-a-long-joined-binary-list">>,
     noesis_binary:join([<<"Hello">>, <<"this">>, <<"is">>, <<"a">>, <<"long">>, <<"joined">>, <<"binary">>, <<"list">>], <<"-">>)).
+
+to_hex_test() ->
+  ?assertEqual("390a", noesis_binary:to_hex(<<1337, 10>>)).
