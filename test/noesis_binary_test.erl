@@ -23,7 +23,9 @@ join_test() ->
     noesis_binary:join([<<"Hello">>, <<"this">>, <<"is">>, <<"a">>, <<"long">>, <<"joined">>, <<"binary">>, <<"list">>], <<"-">>)).
 
 to_hex_test() ->
-  ?assertEqual("390a", noesis_binary:to_hex(<<1337, 10>>)),
   ?assertEqual("f", noesis_binary:to_hex(<<15>>)),
   ?assertEqual("7b7b7b", noesis_binary:to_hex(<<123, 123, 123>>)),
-  ?assertEqual("2a", noesis_binary:to_hex(<<42>>)).
+  ?assertEqual("2a", noesis_binary:to_hex(<<42>>)),
+  ?assertEqual("ff", noesis_binary:to_hex(<<255>>)),
+  ?assertEqual("0", noesis_binary:to_hex(<<256>>)),
+  ?assertEqual("ff00", noesis_binary:to_hex(<<255, 256>>)).
