@@ -47,3 +47,9 @@ partial_extract_test() ->
   ?assertEqual([{test, 1}], noesis_proplists:partial_extract([test], [{test, 1}, {foo, 2}, {bar, 3}])),
   ?assertEqual([{test, 1}], noesis_proplists:partial_extract([test, bar], [{test, 1}, {foo, 2}])),
   ?assertEqual([{test, 1}, {foo, 2}], noesis_proplists:partial_extract([test, foo, bar], [{test, 1}, {foo, 2}, {baz, null}], null)).
+
+merge_test() ->
+  ?assertEqual([{a, 1}, {b, 2}], noesis_proplists:merge([{a, 1}], [{b, 2}])),
+  ?assertEqual([{a, 1}, {b, 2}, {c, 3}], noesis_proplists:merge([{a, 1}, {c, 4}], [{b, 2}, {c, 3}])),
+  ?assertEqual([{a, 1}, {b, 2}, {c, 4}], noesis_proplists:merge(fun(_K, V1, _V2) -> V1 end, [{a, 1}, {c, 4}], [{b, 2}, {c, 3}])),
+  ?assertEqual([{a, 1}, {b, 2}, {c, 3}, {d, 4}, {e, 5}], noesis_proplists:merge([{a, 1}, {c, 4}, {d, 4}], [{b, 2}, {c, 3}, {e, 5}])).

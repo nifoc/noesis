@@ -40,7 +40,9 @@
   extract/3,
   extract/4,
   partial_extract/2,
-  partial_extract/3
+  partial_extract/3,
+  merge/2,
+  merge/3
 ]).
 
 % API
@@ -115,6 +117,21 @@ partial_extract(Keys, List) ->
 partial_extract(Keys, List, NullValue) ->
   List2 = extract(Keys, List, NullValue),
   [{Key, Value} || {Key, Value} <- List2, Value =/= NullValue].
+
+% @doc Delegates to {@link merge/3}. `Fun' is set to function that always uses the value from `ListB'.
+-spec merge(proplist(), proplist()) -> proplist().
+merge(ListA, ListB) ->
+  merge(fun(_Key, _ValueA, ValueB) -> ValueB end, ListA, ListB).
+
+% @doc Merges two property lists, `ListA' and `ListB', to create a new list. All the Key/Value pairs from both lists are
+%      included in the new property list. If a key occurs in both lists then `Fun' is called with the key and both values
+%      to return a new value.
+-spec merge(fun(), proplist(), proplist()) -> proplist().
+merge(Fun, ListA, ListB) ->
+  DictA = dict:from_list(ListA),
+  DictB = dict:from_list(ListB),
+  MergedDict = dict:merge(Fun, DictA, DictB),
+  dict:to_list(MergedDict).
 
 % Private
 
