@@ -19,10 +19,13 @@
 
 -ifdef(namespaced_types).
 -type dict() :: dict:dict().
+-type dict(Key, Value) :: dict:dict(Key, Value).
 -else.
 -type dict() :: dict().
+-type dict(_Key, _Value) :: dict().
 -endif.
 
 -export_type([
-  dict/0
+  dict/0,
+  dict/2
 ]).
