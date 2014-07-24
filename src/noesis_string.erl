@@ -44,7 +44,7 @@ hamming(First, Second) when length(First) =:= length(Second) ->
 
 % Private
 
--spec levenshtein_rec(string(), string(), noesis_dict:dictionary()) -> {non_neg_integer(), noesis_dict:dictionary()}.
+-spec levenshtein_rec(string(), string(), noesis_dict:dictionary(tuple(), non_neg_integer())) -> {non_neg_integer(), noesis_dict:dictionary(tuple(), non_neg_integer())}.
 levenshtein_rec(Str, Str, Dict) ->
   Dict2 = dict:store({Str, Str}, 0, Dict),
   {0, Dict2};
