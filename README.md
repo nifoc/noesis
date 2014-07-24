@@ -4,10 +4,6 @@ A collection of useful utility functions.
 
 [![Build Status](https://travis-ci.org/nifoc/noesis.png)](https://travis-ci.org/nifoc/noesis)
 
-## Status
-
-This is alpha software. Things might still change in ways that break everything.
-
 ## License
 
 [ISC](https://en.wikipedia.org/wiki/ISC_license).
