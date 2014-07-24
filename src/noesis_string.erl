@@ -15,8 +15,6 @@
 
 -module(noesis_string).
 
--include("noesis_types.hrl").
-
 % Types
 
 -type hexstring() :: string().
@@ -46,7 +44,7 @@ hamming(First, Second) when length(First) =:= length(Second) ->
 
 % Private
 
--spec levenshtein_rec(string(), string(), noesis_dict()) -> {non_neg_integer(), noesis_dict()}.
+-spec levenshtein_rec(string(), string(), noesis_dict:dict()) -> {non_neg_integer(), noesis_dict:dict()}.
 levenshtein_rec(Str, Str, Dict) ->
   Dict2 = dict:store({Str, Str}, 0, Dict),
   {0, Dict2};
