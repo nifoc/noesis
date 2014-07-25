@@ -128,10 +128,10 @@ merge(ListA, ListB) ->
 %      to return a new value.
 -spec merge(fun(), proplist(), proplist()) -> proplist().
 merge(Fun, ListA, ListB) ->
-  DictA = dict:from_list(ListA),
-  DictB = dict:from_list(ListB),
-  MergedDict = dict:merge(Fun, DictA, DictB),
-  dict:to_list(MergedDict).
+  DictA = orddict:from_list(ListA),
+  DictB = orddict:from_list(ListB),
+  MergedDict = orddict:merge(Fun, DictA, DictB),
+  orddict:to_list(MergedDict).
 
 % Private
 
