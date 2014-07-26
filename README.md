@@ -4,6 +4,10 @@ A collection of useful utility functions.
 
 [![Build Status](https://travis-ci.org/nifoc/noesis.png)](https://travis-ci.org/nifoc/noesis)
 
+## Resources
+
+* [Generated EDoc](http://noesis.nifoc.pw/0.1/) ([All Versions](http://noesis.nifoc.pw))
+
 ## License
 
 [ISC](https://en.wikipedia.org/wiki/ISC_license).
