@@ -6,4 +6,6 @@
 
 ## 0.1
 
+[Documentation](http://noesis.nifoc.pw/0.1/)
+
 * Initial release
