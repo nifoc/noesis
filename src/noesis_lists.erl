@@ -17,13 +17,14 @@
 
 % API
 -export([
-  group_by/2
+  group_by/2,
+  pmap/2
 ]).
 
 % API
 
 % @doc Groups a list using a user-supplied function.
--spec group_by(fun(), list()) -> noesis_proplists:proplist(term(), list()).
+-spec group_by(fun((A) -> B), [A]) -> noesis_proplists:proplist(B, list(A)).
 group_by(_Fun, []) ->
   [];
 group_by(Fun, List) ->
@@ -31,3 +32,31 @@ group_by(Fun, List) ->
     dict:append(Key, Value, Acc)
   end, dict:new(), [{Fun(X), X} || X <- List]),
   dict:to_list(Dict).
+
+% @doc Takes a function from `A's to `B's and a list of `A's and produces a list of `B's by applying the function
+%      to every element in the list in parallel. This function is used to obtain the return values.<br /><br />
+%      Based on <a href="http://erlang.org/pipermail/erlang-questions/2006-June/020834.html" target="_blank">Erlang on the Niagara</a>
+%      by Joe Armstrong.
+-spec pmap(fun((A) -> B), [A]) -> [B].
+pmap(_Fun, []) -> [];
+pmap(Fun, List) ->
+  Parent = self(),
+  Worker = lists:map(fun(Item) ->
+    spawn(fun() -> parallel_apply(Parent, Fun, Item) end)
+  end, List),
+  parallel_gather(Worker, []).
+
+% Private
+
+-spec parallel_apply(pid(), fun((A) -> B), A) -> B.
+parallel_apply(Parent, Fun, Item) ->
+  Worker = self(),
+  Value = (catch Fun(Item)),
+  Parent ! {Worker, Value}.
+
+-spec parallel_gather([pid()], list()) -> list().
+parallel_gather([], Acc) -> lists:reverse(Acc);
+parallel_gather([Pid|Rest], Acc) ->
+  receive
+    {Pid, Value} -> parallel_gather(Rest, [Value | Acc])
+  end.

@@ -126,7 +126,7 @@ merge(ListA, ListB) ->
 % @doc Merges two property lists, `ListA' and `ListB', to create a new list. All the Key/Value pairs from both lists are
 %      included in the new property list. If a key occurs in both lists then `Fun' is called with the key and both values
 %      to return a new value.
--spec merge(fun(), proplist(), proplist()) -> proplist().
+-spec merge(fun((Key, ValueA, ValueB) -> Value), proplist(Key, ValueA), proplist(Key, ValueB)) -> proplist(Key, Value).
 merge(Fun, ListA, ListB) ->
   DictA = orddict:from_list(ListA),
   DictB = orddict:from_list(ListB),
