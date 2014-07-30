@@ -37,7 +37,10 @@ group_by(Fun, List) ->
 
 % @doc Delegates to {@link pmap/3} and sets default options.<br /><br />
 %      <strong>Default Options</strong><br />
-%      `[{retain_order, true}]'
+%      <pre><code>[
+%        {retain_order, true},
+%        {parallelism, round(erlang:system_info(schedulers) * 1.5)}
+%      ]</code></pre>
 pmap(Fun, List) ->
   Options = [{retain_order, true}],
   pmap(Fun, List, Options).
@@ -46,12 +49,12 @@ pmap(Fun, List) ->
 %      to every element in the list in parallel. The function is used to obtain the return values.<br /><br />
 %      Partially based on <a href="http://erlang.org/pipermail/erlang-questions/2006-June/020834.html" target="_blank">Erlang on the Niagara</a>
 %      by Joe Armstrong.
--spec pmap(fun((A) -> B), [A], list()) -> [B].
+-spec pmap(fun((A) -> B), [A], noesis_proplists:proplist(atom(), term())) -> [B].
 pmap(_Fun, [], _Options) ->
   [];
 pmap(Fun, List, Options) ->
   Ref = make_ref(),
-  Parallelism = round(erlang:system_info(schedulers) * 1.5),
+  Parallelism = noesis_proplists:get_value(parallelism, Options, round(erlang:system_info(schedulers) * 1.5)),
   {Chunks, Rest} = split(Parallelism, List),
   Index = parallel_run(Fun, Ref, 1, Chunks),
   List2 = parallel_run_and_gather(Fun, Ref, Rest, length(List), Index, [], 0),
@@ -103,7 +106,7 @@ parallel_run_and_gather(Fun, Ref, [Chunk|Rest], ResultLength, Index, Acc, AccLen
       parallel_run_and_gather(Fun, Ref, Rest, ResultLength, Index2, Acc2, AccLength2)
   end.
 
--spec parallel_extract_results([{pos_integer(), A}], list()) -> [A].
+-spec parallel_extract_results([{pos_integer(), A}], noesis_proplists:proplist(atom(), term())) -> [A].
 parallel_extract_results(List, Options) ->
   List2 = case lists:member({retain_order, true}, Options) of
     true -> lists:keysort(1, List);
