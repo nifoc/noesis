@@ -51,8 +51,8 @@ pmap(_Fun, [], _Options) ->
   [];
 pmap(Fun, List, Options) ->
   Ref = make_ref(),
-  Schedulers = erlang:system_info(schedulers),
-  {Chunks, Rest} = split(Schedulers, List),
+  Parallelism = round(erlang:system_info(schedulers) * 1.5),
+  {Chunks, Rest} = split(Parallelism, List),
   Index = parallel_run(Fun, Ref, 1, Chunks),
   List2 = parallel_run_and_gather(Fun, Ref, Rest, length(List), Index, [], 0),
   parallel_extract_results(List2, Options).

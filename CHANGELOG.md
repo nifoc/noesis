@@ -2,7 +2,7 @@
 
 ## 0.2
 
-* Add `noesis_lists:pmap/2`, `noesis_lists:split/2`
+* `noesis_lists`: Add `pmap/{2,3}`, `split/2`
 
 ## 0.1
 
