@@ -19,6 +19,7 @@
 -export([
   group_by/2,
   pmap/2,
+  pmap/3,
   split/2
 ]).
 
@@ -34,19 +35,27 @@ group_by(Fun, List) ->
   end, dict:new(), [{Fun(X), X} || X <- List]),
   dict:to_list(Dict).
 
+% @doc Delegates to {@link pmap/3} and sets default options.<br /><br />
+%      <strong>Default Options</strong><br />
+%      `[{retain_order, true}]'
+pmap(Fun, List) ->
+  Options = [{retain_order, true}],
+  pmap(Fun, List, Options).
+
 % @doc Takes a function from `A's to `B's and a list of `A's and produces a list of `B's by applying the function
 %      to every element in the list in parallel. The function is used to obtain the return values.<br /><br />
 %      Partially based on <a href="http://erlang.org/pipermail/erlang-questions/2006-June/020834.html" target="_blank">Erlang on the Niagara</a>
 %      by Joe Armstrong.
--spec pmap(fun((A) -> B), [A]) -> [B].
-pmap(_Fun, []) ->
+-spec pmap(fun((A) -> B), [A], list()) -> [B].
+pmap(_Fun, [], _Options) ->
   [];
-pmap(Fun, List) ->
+pmap(Fun, List, Options) ->
   Ref = make_ref(),
   Schedulers = erlang:system_info(schedulers),
   {Chunks, Rest} = split(Schedulers, List),
-  Index = pmap_run(Fun, Ref, 1, Chunks),
-  pmap_maybe_run_and_gather(Fun, Ref, Rest, Index, length(List), 0, []).
+  Index = parallel_run(Fun, Ref, 1, Chunks),
+  List2 = parallel_run_and_gather(Fun, Ref, Rest, length(List), Index, [], 0),
+  parallel_sort_result(List2, Options).
 
 % @doc Splits `List' into `ListA' and `ListB'. `ListA' contains the first `N' elements and `ListB' the rest of the elements (the `N'th tail).
 %      If `N >= length(List)' this function will not throw an error (as opposed to `lists:split/2').<br /><br />
@@ -64,8 +73,8 @@ split(_N, List) ->
 
 % Private
 
--spec pmap_run(fun(), reference(), pos_integer(), list()) -> pos_integer().
-pmap_run(Fun, Ref, StartIndex, List) ->
+-spec parallel_run(fun(), reference(), pos_integer(), list()) -> pos_integer().
+parallel_run(Fun, Ref, StartIndex, List) ->
   Parent = self(),
   lists:foldl(fun(Item, Index) ->
     _Pid = spawn(fun() ->
@@ -75,23 +84,30 @@ pmap_run(Fun, Ref, StartIndex, List) ->
     Index + 1
   end, StartIndex, List).
 
--spec pmap_maybe_run_and_gather(fun(), reference(), list(), pos_integer(), non_neg_integer(), non_neg_integer(), list()) -> list().
-pmap_maybe_run_and_gather(_Fun, _Ref, [], _Index, ResultLength, AccLength, Acc) when ResultLength =:= AccLength ->
-  Acc2 = lists:keysort(1, Acc),
-  {_Key, List} = lists:unzip(Acc2),
-  List;
-pmap_maybe_run_and_gather(Fun, Ref, [], Index, ResultLength, AccLength, Acc) ->
+-spec parallel_run_and_gather(fun(), reference(), list(), non_neg_integer(), pos_integer(), list(), non_neg_integer()) -> list().
+parallel_run_and_gather(_Fun, _Ref, [], ResultLength, _Index, Acc, AccLength) when ResultLength =:= AccLength ->
+  Acc;
+parallel_run_and_gather(Fun, Ref, [], ResultLength, Index, Acc, AccLength) ->
   receive
     {ResultIndex, Ref, Value} ->
-      AccLength2 = AccLength + 1,
       Acc2 = [{ResultIndex, Value} | Acc],
-      pmap_maybe_run_and_gather(Fun, Ref, [], Index, ResultLength, AccLength2, Acc2)
+      AccLength2 = AccLength + 1,
+      parallel_run_and_gather(Fun, Ref, [], ResultLength, Index, Acc2, AccLength2)
   end;
-pmap_maybe_run_and_gather(Fun, Ref, [Chunk|Rest], Index, ResultLength, AccLength, Acc) ->
+parallel_run_and_gather(Fun, Ref, [Chunk|Rest], ResultLength, Index, Acc, AccLength) ->
   receive
     {ResultIndex, Ref, Value} ->
-      Index2 = pmap_run(Fun, Ref, Index, [Chunk]),
-      AccLength2 = AccLength + 1,
+      Index2 = parallel_run(Fun, Ref, Index, [Chunk]),
       Acc2 = [{ResultIndex, Value} | Acc],
-      pmap_maybe_run_and_gather(Fun, Ref, Rest, Index2, ResultLength, AccLength2, Acc2)
+      AccLength2 = AccLength + 1,
+      parallel_run_and_gather(Fun, Ref, Rest, ResultLength, Index2, Acc2, AccLength2)
   end.
+
+-spec parallel_sort_result([{pos_integer(), A}], list()) -> [A].
+parallel_sort_result(List, Options) ->
+  List2 = case lists:member({retain_order, true}, Options) of
+    true -> lists:keysort(1, List);
+    false -> List
+  end,
+  {_Key, List3} = lists:unzip(List2),
+  List3.
