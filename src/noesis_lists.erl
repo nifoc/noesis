@@ -55,7 +55,7 @@ pmap(Fun, List, Options) ->
   {Chunks, Rest} = split(Schedulers, List),
   Index = parallel_run(Fun, Ref, 1, Chunks),
   List2 = parallel_run_and_gather(Fun, Ref, Rest, length(List), Index, [], 0),
-  parallel_sort_result(List2, Options).
+  parallel_extract_results(List2, Options).
 
 % @doc Splits `List' into `ListA' and `ListB'. `ListA' contains the first `N' elements and `ListB' the rest of the elements (the `N'th tail).
 %      If `N >= length(List)' this function will not throw an error (as opposed to `lists:split/2').<br /><br />
@@ -103,8 +103,8 @@ parallel_run_and_gather(Fun, Ref, [Chunk|Rest], ResultLength, Index, Acc, AccLen
       parallel_run_and_gather(Fun, Ref, Rest, ResultLength, Index2, Acc2, AccLength2)
   end.
 
--spec parallel_sort_result([{pos_integer(), A}], list()) -> [A].
-parallel_sort_result(List, Options) ->
+-spec parallel_extract_results([{pos_integer(), A}], list()) -> [A].
+parallel_extract_results(List, Options) ->
   List2 = case lists:member({retain_order, true}, Options) of
     true -> lists:keysort(1, List);
     false -> List
