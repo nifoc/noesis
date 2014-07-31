@@ -42,8 +42,7 @@ group_by(Fun, List) ->
 %        {parallelism, round(erlang:system_info(schedulers) * 1.5)}
 %      ]</code></pre>
 pmap(Fun, List) ->
-  Options = [{retain_order, true}],
-  pmap(Fun, List, Options).
+  pmap(Fun, List, []).
 
 % @doc Takes a function from `A's to `B's and a list of `A's and produces a list of `B's by applying the function
 %      to every element in the list in parallel. The function is used to obtain the return values.<br /><br />
@@ -53,12 +52,15 @@ pmap(Fun, List) ->
 pmap(_Fun, [], _Options) ->
   [];
 pmap(Fun, List, Options) ->
-  Ref = make_ref(),
-  Parallelism = noesis_proplists:get_value(parallelism, Options, round(erlang:system_info(schedulers) * 1.5)),
-  {Chunks, Rest} = split(Parallelism, List),
-  Index = parallel_run(Fun, Ref, 1, Chunks),
-  List2 = parallel_run_and_gather(Fun, Ref, Rest, length(List), Index, [], 0),
-  parallel_extract_results(List2, Options).
+  case noesis_proplists:get_value(parallelism, Options, round(erlang:system_info(schedulers) * 1.5)) of
+    1 -> lists:map(Fun, List);
+    Parallelism ->
+      Ref = make_ref(),
+      {Chunks, Rest} = split(Parallelism, List),
+      Index = parallel_run(Fun, Ref, 1, Chunks),
+      List2 = parallel_run_and_gather(Fun, Ref, Rest, length(List), Index, [], 0),
+      parallel_extract_results(List2, Options)
+  end.
 
 % @doc Splits `List' into `ListA' and `ListB'. `ListA' contains the first `N' elements and `ListB' the rest of the elements (the `N'th tail).
 %      If `N >= length(List)' this function will not throw an error (as opposed to `lists:split/2').<br /><br />
@@ -108,7 +110,7 @@ parallel_run_and_gather(Fun, Ref, [Chunk|Rest], ResultLength, Index, Acc, AccLen
 
 -spec parallel_extract_results([{pos_integer(), A}], noesis_proplists:proplist(atom(), term())) -> [A].
 parallel_extract_results(List, Options) ->
-  List2 = case lists:member({retain_order, true}, Options) of
+  List2 = case noesis_proplists:get_value(retain_order, Options, true) of
     true -> lists:keysort(1, List);
     false -> List
   end,
