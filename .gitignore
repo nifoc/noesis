@@ -1,6 +1,4 @@
 .DS_Store
-.eunit/
-.rebar/
 deps/
 doc/*
 !doc/overview.edoc
