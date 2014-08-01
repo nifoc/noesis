@@ -1,4 +1,5 @@
 .DS_Store
+.erlang.mk.*
 deps/
 doc/*
 !doc/overview.edoc

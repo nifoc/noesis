@@ -37,10 +37,7 @@ group_by(Fun, List) ->
 
 % @doc Delegates to {@link pmap/3} and sets default options.<br /><br />
 %      <strong>Default Options</strong><br />
-%      <pre><code>[
-%        {retain_order, true},
-%        {parallelism, round(erlang:system_info(schedulers) * 1.5)}
-%      ]</code></pre>
+%      <pre><code>[{retain_order, true}, {parallelism, round(erlang:system_info(schedulers) * 1.5)}]</code></pre>
 pmap(Fun, List) ->
   pmap(Fun, List, []).
 
