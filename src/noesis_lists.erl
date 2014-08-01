@@ -56,7 +56,7 @@ pmap(Fun, List, Options) ->
       {Chunks, Rest} = split(Parallelism, List),
       Index = parallel_run(Fun, Ref, 1, Chunks),
       List2 = parallel_run_and_gather(Fun, Ref, Rest, length(List), Index, [], 0),
-      parallel_extract_results(List2, Options)
+      pmap_extract_results(List2, Options)
   end.
 
 % @doc Splits `List' into `ListA' and `ListB'. `ListA' contains the first `N' elements and `ListB' the rest of the elements (the `N'th tail).
@@ -81,7 +81,7 @@ parallel_run(Fun, Ref, StartIndex, List) ->
   lists:foldl(fun(Item, Index) ->
     _Pid = spawn(fun() ->
       Value = (catch Fun(Item)),
-      Parent ! {Index, Ref, Value}
+      Parent ! {Index, Ref, Item, Value}
     end),
     Index + 1
   end, StartIndex, List).
@@ -91,25 +91,25 @@ parallel_run_and_gather(_Fun, _Ref, [], ResultLength, _Index, Acc, AccLength) wh
   Acc;
 parallel_run_and_gather(Fun, Ref, [], ResultLength, Index, Acc, AccLength) ->
   receive
-    {ResultIndex, Ref, Value} ->
-      Acc2 = [{ResultIndex, Value} | Acc],
+    {ResultIndex, Ref, Item, Value} ->
+      Acc2 = [{ResultIndex, Item, Value} | Acc],
       AccLength2 = AccLength + 1,
       parallel_run_and_gather(Fun, Ref, [], ResultLength, Index, Acc2, AccLength2)
   end;
 parallel_run_and_gather(Fun, Ref, [Chunk|Rest], ResultLength, Index, Acc, AccLength) ->
   receive
-    {ResultIndex, Ref, Value} ->
+    {ResultIndex, Ref, Item, Value} ->
       Index2 = parallel_run(Fun, Ref, Index, [Chunk]),
-      Acc2 = [{ResultIndex, Value} | Acc],
+      Acc2 = [{ResultIndex, Item, Value} | Acc],
       AccLength2 = AccLength + 1,
       parallel_run_and_gather(Fun, Ref, Rest, ResultLength, Index2, Acc2, AccLength2)
   end.
 
--spec parallel_extract_results([{pos_integer(), A}], noesis_proplists:proplist(atom(), term())) -> [A].
-parallel_extract_results(List, Options) ->
+-spec pmap_extract_results([{pos_integer(), A}], noesis_proplists:proplist(atom(), term())) -> [A].
+pmap_extract_results(List, Options) ->
   List2 = case noesis_proplists:get_value(retain_order, Options, true) of
     true -> lists:keysort(1, List);
     false -> List
   end,
-  {_Key, List3} = lists:unzip(List2),
-  List3.
+  {_Keys, _Items, Values} = lists:unzip3(List2),
+  Values.
