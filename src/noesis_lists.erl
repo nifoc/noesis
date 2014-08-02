@@ -44,6 +44,8 @@ group_by(Fun, List) ->
 pfilter(Fun, List) ->
   pfilter(Fun, List, []).
 
+% @doc Returns a list of all elements in `List' for which `Fun' returns `true'. Applying `Fun' to every element in the list
+%      happens in parallel.
 -spec pfilter(fun((T) -> boolean()), [T], noesis_proplists:proplist(atom(), term())) -> [T].
 pfilter(_Fun, [], _Options) ->
   [];
