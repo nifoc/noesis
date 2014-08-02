@@ -6,4 +6,6 @@ otp_release:
   - R16B03
   - R16B02
   - R16B01
-script: make tests
+script:
+  - make dialyze
+  - make tests
