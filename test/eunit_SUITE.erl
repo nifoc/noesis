@@ -28,6 +28,6 @@ all() ->
 % Tests
 
 eunit(_Config) ->
-  ok = eunit:test({application, noesis}),
+  ok = eunit:test({application, noesis}, [verbose]),
   TestMod = noesis_binary, % Any app module
-  ok = eunit:test(nifoc_ct_helper:eunit_modules(TestMod)).
+  ok = eunit:test(nifoc_ct_helper:eunit_modules(TestMod), [verbose]).
