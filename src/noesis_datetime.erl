@@ -243,7 +243,7 @@ rfc1123_monthnum(<<"Oct">>) -> 10;
 rfc1123_monthnum(<<"Nov">>) -> 11;
 rfc1123_monthnum(<<"Dec">>) -> 12.
 
-% Tests
+% Tests (private functions)
 
 -ifdef(TEST).
 rfc1123_dayname_test() ->
