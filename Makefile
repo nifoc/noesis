@@ -1,7 +1,8 @@
 PROJECT = noesis
 PROJECT_VERSION = 0.1
 
-TEST_DEPS = nifoc_ct_helper
+TEST_DEPS = ecoveralls nifoc_ct_helper
+dep_ecoveralls = git https://github.com/nifoc/ecoveralls master
 dep_nifoc_ct_helper = git https://github.com/nifoc/nifoc_ct_helper master
 
 otp_release = $(shell erl -noshell -eval 'io:format("~s", [erlang:system_info(otp_release)]), init:stop()')
@@ -34,9 +35,12 @@ EDOC_OPTS = {def, [ \
 
 include erlang.mk
 
+coverage-report: $(shell ls -1rt `find logs -type f -name \*.coverdata 2>/dev/null` | tail -n1)
+    $(gen_verbose) erl -noshell -pa ebin deps/*/ebin -eval 'ecoveralls:travis_ci("$?"), init:stop()'
+
 upload-docs: docs
 	$(gen_verbose) echo $(PROJECT_VERSION)
 	rsync -avz --no-o --no-g -e ssh --chmod=og=r -p --delete --exclude '*.edoc' --exclude 'edoc-info' doc/ kempkens:/var/www/nifoc/$(PROJECT)/$(PROJECT_VERSION)
 	ssh kempkens chown -R www-data:www-data /var/www/nifoc/$(PROJECT)/$(PROJECT_VERSION)
 
-.PHONY: upload-docs
+.PHONY: coverage-report upload-docs

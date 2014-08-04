@@ -8,3 +8,4 @@
   noesis_string_test,
   eunit_SUITE
 ]}.
+{export, "logs/all.coverdata"}.
