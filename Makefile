@@ -22,11 +22,7 @@ ifeq ($(otp_17plus),0)
 endif
 
 CT_SUITES = eunit
-CT_OPTS = -ct_hooks nifoc_ct_hook []
-
-ifneq ($(USER),travis)
-	CT_OPTS += -cover ./test/cover.spec
-endif
+CT_OPTS = -ct_hooks nifoc_ct_hook [] -cover ./test/cover.spec
 
 EDOC_OPTS = {def, [ \
 					{years, "2014"}, \
