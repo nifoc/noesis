@@ -1,9 +1,13 @@
 PROJECT = noesis
 PROJECT_VERSION = 0.1
 
-TEST_DEPS = ecoveralls nifoc_ct_helper
-dep_ecoveralls = git https://github.com/nifoc/ecoveralls master
+TEST_DEPS = nifoc_ct_helper
 dep_nifoc_ct_helper = git https://github.com/nifoc/nifoc_ct_helper master
+
+ifeq ($(USER),travis)
+	TEST_DEPS += ecoveralls
+	dep_ecoveralls = git https://github.com/nifoc/ecoveralls master
+endif
 
 otp_release = $(shell erl -noshell -eval 'io:format("~s", [erlang:system_info(otp_release)]), init:stop()')
 otp_17plus = $(shell echo $(otp_release) | grep -q -E "^[[:digit:]]+$$" ; echo $$?)
