@@ -1,5 +1,5 @@
 PROJECT = noesis
-PROJECT_VERSION = 0.1
+PROJECT_VERSION = 0.2
 
 TEST_DEPS = nifoc_ct_helper
 dep_nifoc_ct_helper = git https://github.com/nifoc/nifoc_ct_helper master
@@ -39,8 +39,7 @@ coverage-report: $(shell ls -1rt `find logs -type f -name \*.coverdata 2>/dev/nu
 	$(gen_verbose) erl -noshell -pa ebin deps/*/ebin -eval 'ecoveralls:travis_ci("$?"), init:stop()'
 
 upload-docs: docs
-	$(gen_verbose) echo $(PROJECT_VERSION)
-	rsync -avz --no-o --no-g -e ssh --chmod=og=r -p --delete --exclude '*.edoc' --exclude 'edoc-info' doc/ kempkens:/var/www/nifoc/$(PROJECT)/$(PROJECT_VERSION)
-	ssh kempkens chown -R www-data:www-data /var/www/nifoc/$(PROJECT)/$(PROJECT_VERSION)
+	$(gen_verbose) rsync -avz --no-o --no-g -e ssh --chmod=og=r -p --delete --exclude '*.edoc' --exclude 'edoc-info' doc/ kempkens:/var/www/nifoc/$(PROJECT)/$(PROJECT_VERSION)
+	@ssh kempkens chown -R www-data:www-data /var/www/nifoc/$(PROJECT)/$(PROJECT_VERSION)
 
 .PHONY: coverage-report upload-docs

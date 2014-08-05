@@ -2,11 +2,11 @@
 
 A collection of useful utility functions.
 
-[![Build Status](https://travis-ci.org/nifoc/noesis.png)](https://travis-ci.org/nifoc/noesis)
+[![Build Status](https://travis-ci.org/nifoc/noesis.png)](https://travis-ci.org/nifoc/noesis) [![Coverage Status](https://coveralls.io/repos/nifoc/noesis/badge.png?branch=master)](https://coveralls.io/r/nifoc/noesis?branch=master)
 
 ## Resources
 
-* [Generated EDoc](http://noesis.nifoc.pw/0.1/) ([All Versions](http://noesis.nifoc.pw))
+* [Generated EDoc](http://noesis.nifoc.pw/0.2/) ([All Versions](http://noesis.nifoc.pw))
 
 ## License
 
