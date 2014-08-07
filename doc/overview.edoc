@@ -9,6 +9,8 @@ Noesis is a collection of useful utility functions. The source code can be found
 <a href="https://travis-ci.org/nifoc/noesis" target="_blank"><img src="https://travis-ci.org/nifoc/noesis.png" /></a>
 <a href="https://coveralls.io/r/nifoc/noesis?branch=master"><img src="https://coveralls.io/repos/nifoc/noesis/badge.png?branch=master" /></a>
 
+<a href="https://github.com/nifoc/noesis/blob/master/CHANGELOG.md" target="_blank">Changelog</a>
+
 <h2>License</h2>
 
 <pre>Copyright (c) 2014, Daniel Kempkens ``<daniel@kempkens.io>''
