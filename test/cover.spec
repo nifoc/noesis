@@ -4,8 +4,10 @@
   noesis_datetime_test,
   noesis_directories_test,
   noesis_lists_test,
+  noesis_lists_eqc,
   noesis_proplists_test,
   noesis_string_test,
-  eunit_SUITE
+  eunit_SUITE,
+  eqc_SUITE
 ]}.
 {export, "logs/all.coverdata"}.

@@ -1,7 +1,8 @@
 PROJECT = noesis
 PROJECT_VERSION = 0.2
 
-TEST_DEPS = nifoc_ct_helper
+TEST_DEPS = eqcmini nifoc_ct_helper
+dep_eqcmini = git https://github.com/rpt/eqcmini master
 dep_nifoc_ct_helper = git https://github.com/nifoc/nifoc_ct_helper master
 
 ifeq ($(USER),travis)
@@ -17,7 +18,7 @@ ERLC_OPTS ?= -Werror +debug_info +warn_bif_clash +warn_deprecated_function +warn
 				+warn_unused_function +warn_unused_record +warn_unused_vars +warnings_as_errors
 
 TEST_ERLC_OPTS ?= +debug_info +warn_bif_clash +warn_deprecated_function +warn_deprecated_type \
-				+warn_export_vars +warn_shadow_vars +warn_obsolete_guard +warn_unused_import \
+				+warn_export_vars +warn_shadow_vars +warn_obsolete_guard \
 				+warn_unused_function +warn_unused_record +warn_unused_vars +warnings_as_errors
 
 ifeq ($(otp_17plus),0)
@@ -25,7 +26,7 @@ ifeq ($(otp_17plus),0)
 	TEST_ERLC_OPTS += -Dnamespaced_types=1
 endif
 
-CT_SUITES = eunit
+CT_SUITES = eunit eqc
 CT_OPTS = -ct_hooks nifoc_ct_hook [] -cover ./test/cover.spec
 
 EDOC_OPTS = {def, [ \
