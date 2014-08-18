@@ -17,7 +17,7 @@ ERLC_OPTS ?= -Werror +debug_info +warn_bif_clash +warn_deprecated_function +warn
 				+warn_unused_function +warn_unused_record +warn_unused_vars +warnings_as_errors
 
 TEST_ERLC_OPTS ?= +debug_info +warn_bif_clash +warn_deprecated_function +warn_deprecated_type \
-				+warn_export_all +warn_export_vars +warn_shadow_vars +warn_obsolete_guard +warn_unused_import \
+				+warn_export_vars +warn_shadow_vars +warn_obsolete_guard +warn_unused_import \
 				+warn_unused_function +warn_unused_record +warn_unused_vars +warnings_as_errors
 
 ifeq ($(otp_17plus),0)
