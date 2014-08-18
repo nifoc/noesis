@@ -21,6 +21,28 @@ non_neg_int() ->
 
 % Properties
 
+prop_pfilter_1() ->
+  ?FORALL({X, Xs}, {int(), list(int())},
+    not lists:member(X, noesis_lists:pfilter(fun(Y) -> Y =/= X end, Xs))).
+
+prop_pfilter_2() ->
+  ?FORALL({X, Xs}, {int(), list(int())},
+    begin
+      Fun = fun(Y) -> Y =/= X end,
+      ListA = noesis_lists:pfilter(Fun, Xs),
+      ListB = lists:filter(Fun, Xs),
+      ListA =:= ListB
+    end).
+
+prop_pmap_1() ->
+  ?FORALL(List, list(int()),
+    begin
+      Fun = fun(X) -> X + 1 end,
+      ListA = noesis_lists:pmap(Fun, List),
+      ListB = lists:map(Fun, List),
+      ListA =:= ListB
+    end).
+
 prop_split_1() ->
   ?FORALL({N, List}, {non_neg_int(), list(int())},
     length(element(1, noesis_lists:split(N, List))) =< N).
