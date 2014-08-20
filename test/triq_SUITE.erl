@@ -8,7 +8,7 @@
 % DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
 % NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
--module(eqc_SUITE).
+-module(triq_SUITE).
 
 -include_lib("common_test/include/ct.hrl").
 
@@ -19,16 +19,16 @@
 
 % Tests
 -export([
-  eqc/1
+  triq/1
 ]).
 
 % Common Test
 
 all() ->
-  [eqc].
+  [triq].
 
 % Tests
 
-eqc(_Config) ->
+triq(_Config) ->
   TestMod = noesis_binary, % Any app module
-  [[]] = [eqc:module(Mod) || Mod <- nifoc_ct_helper:eqc_modules(TestMod)].
+  _ = [true = triq:module(Mod) || Mod <- nifoc_ct_helper:triq_modules(TestMod)].
