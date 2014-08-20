@@ -39,14 +39,14 @@ keypos_test() ->
 
 extract_test() ->
   ?assertEqual([{test, 1}], noesis_proplists:extract([test], [{test, 1}, {foo, 2}, {bar, 3}])),
-  ?assertEqual([{test, 1}, {bar, undefined}], noesis_proplists:extract([test, bar], [{test, 1}, {foo, 2}])),
-  ?assertEqual([{test, 1}, {bar, null}], noesis_proplists:extract([test, bar], [{test, 1}, {foo, 2}], null)),
-  ?assertEqual([{test, 1}, {bar, 99}], noesis_proplists:extract([test, bar], [{test, 1}, {foo, 2}], null, [{bar, 99}])).
+  ?assertEqual([{bar, undefined}, {test, 1}], noesis_proplists:extract([test, bar], [{test, 1}, {foo, 2}])),
+  ?assertEqual([{bar, null}, {test, 1}], noesis_proplists:extract([test, bar], [{test, 1}, {foo, 2}], null)),
+  ?assertEqual([{bar, 99}, {test, 1}], noesis_proplists:extract([test, bar], [{test, 1}, {foo, 2}], null, [{bar, 99}])).
 
 partial_extract_test() ->
   ?assertEqual([{test, 1}], noesis_proplists:partial_extract([test], [{test, 1}, {foo, 2}, {bar, 3}])),
   ?assertEqual([{test, 1}], noesis_proplists:partial_extract([test, bar], [{test, 1}, {foo, 2}])),
-  ?assertEqual([{test, 1}, {foo, 2}], noesis_proplists:partial_extract([test, foo, bar], [{test, 1}, {foo, 2}, {baz, null}], null)).
+  ?assertEqual([{foo, 2}, {test, 1}], noesis_proplists:partial_extract([test, foo, bar], [{test, 1}, {foo, 2}, {baz, null}], null)).
 
 merge_test() ->
   ?assertEqual([{a, 1}, {b, 2}], noesis_proplists:merge([{a, 1}], [{b, 2}])),

@@ -104,7 +104,7 @@ extract(Keys, List, NullValue, Defaults) ->
         {Key, Default};
       Value -> {Key, Value}
     end
-  end, Keys).
+  end, lists:usort(Keys)).
 
 % @doc Delegates to {@link partial_extract/3}. `NullValue' is set to `undefined'.
 -spec partial_extract([term()], proplist()) -> proplist().

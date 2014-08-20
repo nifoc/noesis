@@ -242,7 +242,7 @@ clean:: clean-app
 
 erlc-include:
 	-@if [ -d ebin/ ]; then \
-		find include/ src/ -type f -name \*.hrl -newer ebin -exec touch $(shell find src/ -type f -name "*.erl") \; 2>/dev/null || /bin/echo -n; \
+		find include/ src/ -type f -name \*.hrl -newer ebin -exec touch $(shell find src/ -type f -name "*.erl") \; 2>/dev/null || printf ''; \
 	fi
 
 clean-app:
@@ -539,7 +539,7 @@ else
 endif
 
 TEST_ERLC_OPTS ?= +debug_info +warn_export_vars +warn_shadow_vars +warn_obsolete_guard
-TEST_ERLC_OPTS += -DTEST=1 -DEXTRA=1 +'{parse_transform, eunit_autoexport}'
+TEST_ERLC_OPTS += -DTEST=1 -DEXTRA=1
 
 # Core targets.
 
