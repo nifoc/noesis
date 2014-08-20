@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3
+
+* `noesis_proplists:extract/{2,3,4}` now ignores duplicate entries in the list of keys that should be extracted
+
 ## 0.2
 
 [Documentation](http://noesis.nifoc.pw/0.2/)

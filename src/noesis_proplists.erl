@@ -94,7 +94,8 @@ extract(Keys, List, NullValue) ->
 
 % @doc Extracts key/value pairs from a property list and returns a new property list containing only extracted pairs.<br />
 %      You can provide a set of default values that will be used as fallback if the key is not found in `List'. If the key is not
-%      found in `Defaults' either, the `NullValue' will be used for the value part.
+%      found in `Defaults' either, the `NullValue' will be used for the value part.<br />
+%      Duplicate entries in `Keys' will be ignored.
 -spec extract([term()], proplist(), term(), proplist()) -> proplist().
 extract(Keys, List, NullValue, Defaults) ->
   lists:map(fun(Key) ->
