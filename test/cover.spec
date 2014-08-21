@@ -1,6 +1,7 @@
 {incl_app, noesis, details}.
 {excl_mods, noesis, [
   noesis_binary_test,
+  noesis_binary_triq,
   noesis_datetime_test,
   noesis_directories_test,
   noesis_lists_test,
