@@ -10,12 +10,13 @@
 
 -module(noesis_lists_triq).
 
+-import(triq, [numtests/2]).
+
 -include_lib("triq/include/triq.hrl").
 
 % Generators
 
-non_neg_int() ->
-  ?SUCHTHAT(I, int(), I >= 0).
+non_neg_int() -> ?SUCHTHAT(I, int(), I >= 0).
 
 % Properties
 
@@ -46,11 +47,11 @@ prop_split_1() ->
     length(element(1, noesis_lists:split(N, List))) =< N).
 
 prop_split_2() ->
-  ?FORALL({N, List}, {non_neg_int(), list(int())},
+  numtests(200, ?FORALL({N, List}, {non_neg_int(), list(int())},
     ?IMPLIES(length(List) >= N,
-      length(element(1, noesis_lists:split(N, List))) =:= N)).
+      length(element(1, noesis_lists:split(N, List))) =:= N))).
 
 prop_split_3() ->
-  ?FORALL({N, List}, {non_neg_int(), list(int())},
+  numtests(200, ?FORALL({N, List}, {non_neg_int(), list(int())},
     ?IMPLIES(length(List) < N,
-      length(element(2, noesis_lists:split(N, List))) =:= 0)).
+      length(element(2, noesis_lists:split(N, List))) =:= 0))).

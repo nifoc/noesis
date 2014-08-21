@@ -10,18 +10,17 @@
 
 -module(noesis_proplists_triq).
 
+-import(triq, [numtests/2]).
+
 -include_lib("triq/include/triq.hrl").
 
 % Generators
 
-proplist_key() ->
-  binary().
+proplist_key() -> binary().
 
-proplist_value() ->
-  int().
+proplist_value() -> int().
 
-proplist() ->
-  list({proplist_key(), proplist_value()}).
+proplist() -> list({proplist_key(), proplist_value()}).
 
 % Properties
 
@@ -34,23 +33,23 @@ prop_get_keys_1() ->
     end).
 
 prop_get_value_1() ->
-  ?FORALL({Key, Proplist}, {proplist_key(), proplist()},
+  numtests(200, ?FORALL({Key, Proplist}, {proplist_key(), proplist()},
     ?IMPLIES(proplists:is_defined(Key, Proplist),
-      undefined =/= noesis_proplists:get_value(Key, Proplist))).
+      undefined =/= noesis_proplists:get_value(Key, Proplist)))).
 
 prop_delete_keys_1() ->
   ?FORALL({Key, Proplist}, {proplist_key(), proplist()},
     not lists:member(Key, noesis_proplists:delete_keys([Key], Proplist))).
 
 prop_keypos_1() ->
-  ?FORALL({Key, Proplist}, {proplist_key(), proplist()},
+  numtests(200, ?FORALL({Key, Proplist}, {proplist_key(), proplist()},
     ?IMPLIES(proplists:is_defined(Key, Proplist),
-      undefined =/= noesis_proplists:keypos(Key, Proplist))).
+      undefined =/= noesis_proplists:keypos(Key, Proplist)))).
 
 prop_keypos_2() ->
-  ?FORALL({Key, Proplist}, {proplist_key(), proplist()},
+  numtests(200, ?FORALL({Key, Proplist}, {proplist_key(), proplist()},
     ?IMPLIES(not proplists:is_defined(Key, Proplist),
-      undefined =:= noesis_proplists:keypos(Key, Proplist))).
+      undefined =:= noesis_proplists:keypos(Key, Proplist)))).
 
 prop_extract_1() ->
   ?FORALL({Keys, Proplist}, {list(proplist_key()), proplist()},
