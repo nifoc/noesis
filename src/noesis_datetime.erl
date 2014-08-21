@@ -166,7 +166,7 @@ iso8601() ->
 %      This function has only been tested under very specific circumstances.
 -spec iso8601(calendar:datetime()) -> binary().
 iso8601({{Year, Month, Day}, {Hour, Minute, Second}}) ->
-  Formatted = io_lib:format("~w-~2..0w-~2..0wT~2..0w:~2..0w:~2..0wZ", [Year, Month, Day, Hour, Minute, Second]),
+  Formatted = io_lib:format("~4..0w-~2..0w-~2..0wT~2..0w:~2..0w:~2..0wZ", [Year, Month, Day, Hour, Minute, Second]),
   unicode:characters_to_binary(Formatted).
 
 % @doc Parses an ISO 8601 binary string into `calendar:datetime()'.<br />

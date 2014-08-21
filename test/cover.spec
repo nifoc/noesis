@@ -3,6 +3,7 @@
   noesis_binary_test,
   noesis_binary_triq,
   noesis_datetime_test,
+  noesis_datetime_triq,
   noesis_directories_test,
   noesis_lists_test,
   noesis_lists_triq,
