@@ -2,7 +2,7 @@ PROJECT = noesis
 PROJECT_VERSION = 0.2
 
 TEST_DEPS = triq nifoc_ct_helper
-dep_triq = git https://github.com/krestenkrab/triq master
+dep_triq = git https://github.com/nifoc/triq makefile
 dep_nifoc_ct_helper = git https://github.com/nifoc/nifoc_ct_helper master
 
 ifeq ($(USER),travis)
