@@ -3,6 +3,7 @@
 ## 0.3
 
 * `noesis_proplists:extract/{2,3,4}` now ignores duplicate entries in the list of keys that should be extracted
+* `noesis_datetime:rfc1123/1` now prefixes one, two or three digit years with zeros
 
 ## 0.2
 

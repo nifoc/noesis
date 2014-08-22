@@ -38,21 +38,49 @@ minute_binary_digit() -> ?LET(I, minute_int(), iolist_to_binary(io_lib:format("~
 
 second_binary_digit() -> ?LET(I, second_int(), iolist_to_binary(io_lib:format("~2..0w", [I]))).
 
-iso8601_tuple() -> {{year_int(), month_int(), day_int()}, {hour_int(), minute_int(), second_int()}}.
+month_binary_word() -> oneof([<<"Jan">>, <<"Feb">>, <<"Mar">>, <<"Apr">>, <<"May">>, <<"Jun">>,
+                              <<"Jul">>, <<"Aug">>, <<"Sep">>, <<"Oct">>, <<"Nov">>, <<"Dec">>]).
+
+day_binary_word() -> oneof([<<"Mon">>, <<"Tue">>, <<"Wed">>, <<"Thu">>, <<"Fri">>, <<"Sat">>, <<"Sun">>]).
+
+datetime() -> {{year_int(), month_int(), day_int()}, {hour_int(), minute_int(), second_int()}}.
+
+rfc1123_binary() -> ?LET({WD, D, Mo, Y, H, Mi, S},
+                         {day_binary_word(), day_binary_digit(), month_binary_word(), year_binary_digit(),
+                          hour_binary_digit(), minute_binary_digit(), second_binary_digit()},
+                         <<WD/binary, ", ", D/binary, " ", Mo/binary, " ", Y/binary, " ", H/binary, ":", Mi/binary, ":", S/binary, " GMT">>).
 
 iso8601_binary() -> ?LET({Y, Mo, D, H, Mi, S},
                          {year_binary_digit(), month_binary_digit(), day_binary_digit(), hour_binary_digit(), minute_binary_digit(), second_binary_digit()},
-                         <<Y/binary, "-", Mo/binary, "-", D/binary, " ", H/binary, ":", Mi/binary, ":", S/binary>>
-                        ).
+                         <<Y/binary, "-", Mo/binary, "-", D/binary, "T", H/binary, ":", Mi/binary, ":", S/binary, "Z">>).
 
 % Properties
 
+prop_rfc1123_1() ->
+  ?FORALL(Tuple, datetime(),
+    is_binary(noesis_datetime:rfc1123(Tuple))).
+
+prop_rfc1123_2() ->
+  ?FORALL(Tuple, datetime(),
+    begin
+      Bin = noesis_datetime:rfc1123(Tuple),
+      Tuple =:= noesis_datetime:rfc1123_to_datetime(Bin)
+    end).
+
+prop_rfc1123_to_datetime_1() ->
+  ?FORALL(Bin, rfc1123_binary(),
+    is_tuple(noesis_datetime:rfc1123_to_datetime(Bin))).
+
+prop_rfc1123_to_datetime_2() ->
+  ?FORALL(Bin, rfc1123_binary(),
+    calendar:valid_date(element(1, noesis_datetime:rfc1123_to_datetime(Bin)))).
+
 prop_iso8601_1() ->
-  ?FORALL(Tuple, iso8601_tuple(),
+  ?FORALL(Tuple, datetime(),
     is_binary(noesis_datetime:iso8601(Tuple))).
 
 prop_iso8601_2() ->
-  ?FORALL(Tuple, iso8601_tuple(),
+  ?FORALL(Tuple, datetime(),
     begin
       Bin = noesis_datetime:iso8601(Tuple),
       Tuple =:= noesis_datetime:iso8601_to_datetime(Bin)
