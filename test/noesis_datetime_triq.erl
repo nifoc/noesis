@@ -14,17 +14,17 @@
 
 % Generators
 
-year_int() -> ?SUCHTHAT(I, int(), (I >= 0) and (I =< 9999)).
+year_int() -> oneof(lists:seq(0, 9999)).
 
-month_int() -> ?SUCHTHAT(I, int(), (I >= 1) and (I =< 12)).
+month_int() -> oneof(lists:seq(1, 12)).
 
-day_int() -> ?SUCHTHAT(I, int(), (I >= 1) and (I =< 28)).
+day_int() -> oneof(lists:seq(1, 28)).
 
-hour_int() -> ?SUCHTHAT(I, int(), (I >= 0) and (I =< 23)).
+hour_int() -> oneof(lists:seq(0, 23)).
 
-minute_int() -> ?SUCHTHAT(I, int(), (I >= 0) and (I =< 59)).
+minute_int() -> oneof(lists:seq(0, 59)).
 
-second_int() -> ?SUCHTHAT(I, int(), (I >= 0) and (I =< 59)).
+second_int() -> oneof(lists:seq(0, 59)).
 
 year_binary_digit() -> ?LET(I, year_int(), iolist_to_binary(io_lib:format("~4..0w", [I]))).
 
