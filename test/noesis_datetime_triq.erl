@@ -14,7 +14,7 @@
 
 % Generators
 
-year_int() -> oneof(lists:seq(0, 9999)).
+year_int() -> ?SUCHTHAT(I, int(), (I >= 0) and (I =< 9999)).
 
 month_int() -> oneof(lists:seq(1, 12)).
 

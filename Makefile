@@ -1,5 +1,5 @@
 PROJECT = noesis
-PROJECT_VERSION = 0.2
+PROJECT_VERSION = 0.2.1
 
 TEST_DEPS = triq nifoc_ct_helper
 dep_triq = git https://github.com/nifoc/triq makefile
