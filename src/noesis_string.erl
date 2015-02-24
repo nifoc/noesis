@@ -31,7 +31,9 @@
 
 % API
 
-% @doc Calculates the Levenshtein distance between two strings.
+% @doc Calculates the Levenshtein distance between two strings.<br /><br />
+%      Partially based on a <a href="http://rosettacode.org/wiki/Levenshtein_distance#Erlang" target="_blank">Rosetta Code</a>
+%      example.
 -spec levenshtein(string(), string()) -> non_neg_integer().
 levenshtein(First, Second) ->
   {Distance, _Dict} = levenshtein_rec(First, Second, dict:new()),
@@ -45,20 +47,10 @@ hamming(First, Second) when length(First) =:= length(Second) ->
 % Private
 
 -spec levenshtein_rec(string(), string(), noesis_dict:dictionary(tuple(), non_neg_integer())) -> {non_neg_integer(), noesis_dict:dictionary(tuple(), non_neg_integer())}.
-levenshtein_rec(Str, Str, Dict) ->
-  Dict2 = dict:store({Str, Str}, 0, Dict),
-  {0, Dict2};
-levenshtein_rec([FH], [SH], Dict) ->
-  Dict2 = dict:store({FH, SH}, 1, Dict),
-  {1, Dict2};
-levenshtein_rec([], Second, Dict) ->
-  Length = length(Second),
-  Dict2 = dict:store({[], Second}, Length, Dict),
-  {Length, Dict2};
-levenshtein_rec(First, [], Dict) ->
-  Length = length(First),
-  Dict2 = dict:store({First, []}, Length, Dict),
-  {Length, Dict2};
+levenshtein_rec(Str, Str, Dict) -> {0, Dict};
+levenshtein_rec([_FH], [_SH], Dict) -> {1, Dict};
+levenshtein_rec([], Second, Dict) -> {length(Second), Dict};
+levenshtein_rec(First, [], Dict) -> {length(First), Dict};
 levenshtein_rec([FH|FT]=First, [SH|ST]=Second, Dict) ->
   case dict:is_key({First, Second}, Dict) of
     true ->
