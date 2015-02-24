@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3
+
+* Added `noesis_geometry' module with some (more or less) geometry related functions
+
 ## 0.2.1
 
 [Documentation](http://noesis.nifoc.pw/0.2.1/)
