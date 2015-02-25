@@ -8,6 +8,7 @@
   noesis_geometry_test,
   noesis_lists_test,
   noesis_lists_triq,
+  noesis_math_test,
   noesis_proplists_test,
   noesis_proplists_triq,
   noesis_string_test,

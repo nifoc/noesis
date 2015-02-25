@@ -3,6 +3,7 @@
 ## 0.3
 
 * Added `noesis_geometry' module with some (more or less) geometry related functions
+* Added `noesis_math' module
 
 ## 0.2.1
 

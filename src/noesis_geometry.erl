@@ -18,12 +18,20 @@
 -import(math, [
   asin/1,
   cos/1,
+  log/1,
   pow/2,
   sin/1,
-  sqrt/1
+  sqrt/1,
+  tan/1
+]).
+
+-import(noesis_math, [
+  fmod/2
 ]).
 
 -define(PI, math:pi()).
+-define(PI_HALF, math:pi() / 2).
+-define(PI_FOURTH, math:pi() / 4).
 -define(R, 6372.8). % Earth radius
 
 % Types
@@ -39,6 +47,7 @@
   lat/1,
   lng/1,
   haversine/2,
+  rhumb_destination_point/3,
   deg2rad/1,
   rad2deg/1
 ]).
@@ -54,7 +63,8 @@ lat({_Lng, Lat}) -> Lat.
 lng({Lng, _Lat}) -> Lng.
 
 % @doc Calculates the great-circle distance between two coordinates, that is the shortest distance between
-%      two points on the surface of a sphere.
+%      two points on the surface of a sphere.<br />
+%      `StartLng', `StartLat', `EndLng' and `EndLat' are all expected to be in degrees.
 -spec haversine(coordinates(), coordinates()) -> number().
 haversine({StartLng, StartLat}, {EndLng, EndLat}) ->
   DLng = deg2rad(EndLng - StartLng),
@@ -64,6 +74,33 @@ haversine({StartLng, StartLat}, {EndLng, EndLat}) ->
   A = pow(sin(DLat / 2), 2) + cos(RadStartLat) * cos(RadEndLat) * pow(sin(DLng / 2), 2),
   C = 2 * asin(sqrt(A)),
   ?R * C.
+
+% @doc Given a starting point, a bearing and a distance, this will calculate the destination point.
+%      If you maintain a constant bearing along a rhumb line, you will gradually spiral in towards one of the poles.<br />
+%      `Point' and `Bearing' are both expected to be in degrees. `Distance' is expected to be in kilometers.
+-spec rhumb_destination_point(coordinates(), number(), number()) -> coordinates().
+rhumb_destination_point(Point, Bearing, Distance) ->
+  D = Distance / ?R,
+  {RadLng, RadLat} = deg2rad(Point),
+  RadBrearing = deg2rad(Bearing),
+  DestLat = RadLat + D * cos(RadBrearing),
+  DLat = DestLat - RadLat,
+  DPsi = log(tan(DestLat / 2 + ?PI_FOURTH) / tan(RadLat / 2 + ?PI_FOURTH)),
+  Q = try (DLat / DPsi)
+      catch
+        error:_ -> cos(RadLat)
+      end,
+  DLng = D * sin(RadBrearing) / Q,
+  DestLat2 = case abs(DestLat) > ?PI_HALF of
+    true ->
+      if
+        DestLat > 0 -> ?PI - DestLat;
+        true -> -(?PI - DestLat)
+      end;
+    false -> DestLat
+  end,
+  DestLng = fmod((RadLng + DLng + ?PI), (2 * ?PI)) - ?PI,
+  {rad2deg(DestLng), rad2deg(DestLat2)}.
 
 % @doc Converts degrees to radians.
 -spec deg2rad(number() | coordinates()) -> number() | coordinates().
