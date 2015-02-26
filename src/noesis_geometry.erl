@@ -17,6 +17,7 @@
 
 -import(math, [
   asin/1,
+  atan2/2,
   cos/1,
   log/1,
   pow/2,
@@ -46,8 +47,9 @@
 -export([
   lat/1,
   lng/1,
-  haversine/2,
+  distance/2,
   rhumb_destination_point/3,
+  rhumb_bearing_to/2,
   deg2rad/1,
   rad2deg/1
 ]).
@@ -65,8 +67,8 @@ lng({Lng, _Lat}) -> Lng.
 % @doc Calculates the great-circle distance between two coordinates, that is the shortest distance between
 %      two points on the surface of a sphere.<br />
 %      `StartLng', `StartLat', `EndLng' and `EndLat' are all expected to be in degrees.
--spec haversine(coordinates(), coordinates()) -> number().
-haversine({StartLng, StartLat}, {EndLng, EndLat}) ->
+-spec distance(coordinates(), coordinates()) -> number().
+distance({StartLng, StartLat}, {EndLng, EndLat}) ->
   DLng = deg2rad(EndLng - StartLng),
   DLat = deg2rad(EndLat - StartLat),
   RadStartLat = deg2rad(StartLat),
@@ -77,7 +79,8 @@ haversine({StartLng, StartLat}, {EndLng, EndLat}) ->
 
 % @doc Given a starting point, a bearing and a distance, this will calculate the destination point.
 %      If you maintain a constant bearing along a rhumb line, you will gradually spiral in towards one of the poles.<br />
-%      `Point' and `Bearing' are both expected to be in degrees. `Distance' is expected to be in kilometers.
+%      `Point' and `Bearing' are both expected to be in degrees. `Distance' is expected to be in kilometers.<br /><br />
+%      Based on <a href="http://www.movable-type.co.uk/scripts/latlong.html">Movable Type Scripts</a> by Chris Veness.
 -spec rhumb_destination_point(coordinates(), number(), number()) -> coordinates().
 rhumb_destination_point(Point, Bearing, Distance) ->
   D = Distance / ?R,
@@ -101,6 +104,25 @@ rhumb_destination_point(Point, Bearing, Distance) ->
   end,
   DestLng = fmod((RadLng + DLng + ?PI), (2 * ?PI)) - ?PI,
   {rad2deg(DestLng), rad2deg(DestLat2)}.
+
+% @doc Given a starting point and a destination point, this will calculate the bearing between the two.<br />
+%      `StartPoint' and `DestPoint' are both expected to be in degrees.<br /><br />
+%      Partially based on <a href="http://www.movable-type.co.uk/scripts/latlong.html">Movable Type Scripts</a> by Chris Veness.
+-spec rhumb_bearing_to(coordinates(), coordinates()) -> number().
+rhumb_bearing_to(StartPoint, DestPoint) ->
+  {RadStartLng, RadStartLat} = deg2rad(StartPoint),
+  {RadDestLng, RadDestLat} = deg2rad(DestPoint),
+  DLng = RadDestLng - RadStartLng,
+  DPsi = log(tan(RadDestLat / 2 + ?PI_FOURTH) / tan(RadStartLat / 2 + ?PI_FOURTH)),
+  DLng2 = case abs(DLng) > ?PI of
+    true ->
+      if
+        DLng > 0 -> -(2 * ?PI - DLng);
+        true -> (2 * ?PI + DLng)
+      end;
+    false -> DLng
+  end,
+  rad2deg(atan2(DLng2, DPsi)).
 
 % @doc Converts degrees to radians.
 -spec deg2rad(number() | coordinates()) -> number() | coordinates().
