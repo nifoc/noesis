@@ -122,7 +122,8 @@ rhumb_bearing_to(StartPoint, DestPoint) ->
       end;
     false -> DLng
   end,
-  rad2deg(atan2(DLng2, DPsi)).
+  Bearing = rad2deg(atan2(DLng2, DPsi)),
+  fmod(Bearing + 360, 360).
 
 % @doc Converts degrees to radians.
 -spec deg2rad(number() | coordinates()) -> number() | coordinates().
