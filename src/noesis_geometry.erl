@@ -94,14 +94,7 @@ rhumb_destination_point(Point, Bearing, Distance) ->
         error:_ -> cos(RadLat)
       end,
   DLng = D * sin(RadBrearing) / Q,
-  DestLat2 = case abs(DestLat) > ?PI_HALF of
-    true ->
-      if
-        DestLat > 0 -> ?PI - DestLat;
-        true -> -(?PI - DestLat)
-      end;
-    false -> DestLat
-  end,
+  DestLat2 = rhumb_bounds_check((abs(DestLat) > ?PI_HALF), (?PI - DestLat), -(?PI - DestLat), DestLat),
   DestLng = fmod((RadLng + DLng + ?PI), (2 * ?PI)) - ?PI,
   {rad2deg(DestLng), rad2deg(DestLat2)}.
 
@@ -114,14 +107,7 @@ rhumb_bearing_to(StartPoint, DestPoint) ->
   {RadDestLng, RadDestLat} = deg2rad(DestPoint),
   DLng = RadDestLng - RadStartLng,
   DPsi = log(tan(RadDestLat / 2 + ?PI_FOURTH) / tan(RadStartLat / 2 + ?PI_FOURTH)),
-  DLng2 = case abs(DLng) > ?PI of
-    true ->
-      if
-        DLng > 0 -> -(2 * ?PI - DLng);
-        true -> (2 * ?PI + DLng)
-      end;
-    false -> DLng
-  end,
+  DLng2 = rhumb_bounds_check((abs(DLng) > ?PI), -(2 * ?PI - DLng), (2 * ?PI + DLng), DLng),
   Bearing = rad2deg(atan2(DLng2, DPsi)),
   fmod(Bearing + 360, 360).
 
@@ -134,3 +120,10 @@ deg2rad(Deg) -> ?PI * Deg / 180.
 -spec rad2deg(number() | coordinates()) -> number() | coordinates().
 rad2deg({Lng, Lat}) -> {rad2deg(Lng), rad2deg(Lat)};
 rad2deg(Rad) -> 180 * Rad / ?PI.
+
+% Private
+
+-spec rhumb_bounds_check(boolean(), number(), number(), number()) -> number().
+rhumb_bounds_check(true, GtZero, _LteZero, Default) when Default > 0 -> GtZero;
+rhumb_bounds_check(true, _GtZero, LteZero, _Default) -> LteZero;
+rhumb_bounds_check(false, _GtZero, _LteZero, Default) -> Default.
