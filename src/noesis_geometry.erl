@@ -89,10 +89,7 @@ rhumb_destination_point(Point, Bearing, Distance) ->
   DestLat = RadLat + D * cos(RadBrearing),
   DLat = DestLat - RadLat,
   DPsi = log(tan(DestLat / 2 + ?PI_FOURTH) / tan(RadLat / 2 + ?PI_FOURTH)),
-  Q = try (DLat / DPsi)
-      catch
-        error:_ -> cos(RadLat)
-      end,
+  Q = rhumb_q(DLat, DPsi, RadLat),
   DLng = D * sin(RadBrearing) / Q,
   DestLat2 = rhumb_bounds_check((abs(DestLat) > ?PI_HALF), (?PI - DestLat), -(?PI - DestLat), DestLat),
   DestLng = fmod((RadLng + DLng + ?PI), (2 * ?PI)) - ?PI,
@@ -127,3 +124,10 @@ rad2deg(Rad) -> 180 * Rad / ?PI.
 rhumb_bounds_check(true, GtZero, _LteZero, Default) when Default > 0 -> GtZero;
 rhumb_bounds_check(true, _GtZero, LteZero, _Default) -> LteZero;
 rhumb_bounds_check(false, _GtZero, _LteZero, Default) -> Default.
+
+-spec rhumb_q(number(), number(), number()) -> number().
+rhumb_q(DLat, DPsi, RadLat) ->
+  try (DLat / DPsi)
+  catch
+    error:_ -> cos(RadLat)
+  end.
