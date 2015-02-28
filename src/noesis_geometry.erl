@@ -30,6 +30,10 @@
   fmod/2
 ]).
 
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+-endif.
+
 -define(PI, math:pi()).
 -define(PI_HALF, math:pi() / 2).
 -define(PI_FOURTH, math:pi() / 4).
@@ -131,3 +135,16 @@ rhumb_q(DLat, DPsi, RadLat) ->
   catch
     error:_ -> cos(RadLat)
   end.
+
+% Tests (private functions)
+
+-ifdef(TEST).
+rhumb_bounds_check_test() ->
+  ?assertEqual(9001, rhumb_bounds_check(true, 9001, 0, 1)),
+  ?assertEqual(9001, rhumb_bounds_check(true, 0, 9001, 0)),
+  ?assertEqual(9001, rhumb_bounds_check(false, 0, 0, 9001)).
+
+rhumb_q_test() ->
+  ?assertEqual(2.0, rhumb_q(10, 5, 9001)),
+  ?assertEqual(1.0, rhumb_q(9001, 0, 0)).
+-endif.
