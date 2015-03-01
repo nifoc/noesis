@@ -93,7 +93,7 @@ rhumb_destination_point(Point, Bearing, Distance) ->
   DestLat = RadLat + D * cos(RadBrearing),
   DLat = DestLat - RadLat,
   DPsi = log(tan(DestLat / 2 + ?PI_FOURTH) / tan(RadLat / 2 + ?PI_FOURTH)),
-  Q = rhumb_q(DLat, DPsi, RadLat),
+  Q = rhumb_calculate_q(DLat, DPsi, RadLat),
   DLng = D * sin(RadBrearing) / Q,
   DestLat2 = rhumb_bounds_check((abs(DestLat) > ?PI_HALF), (?PI - DestLat), -(?PI - DestLat), DestLat),
   DestLng = fmod((RadLng + DLng + ?PI), (2 * ?PI)) - ?PI,
@@ -129,8 +129,8 @@ rhumb_bounds_check(true, GtZero, _LteZero, Default) when Default > 0 -> GtZero;
 rhumb_bounds_check(true, _GtZero, LteZero, _Default) -> LteZero;
 rhumb_bounds_check(false, _GtZero, _LteZero, Default) -> Default.
 
--spec rhumb_q(number(), number(), number()) -> number().
-rhumb_q(DLat, DPsi, RadLat) ->
+-spec rhumb_calculate_q(number(), number(), number()) -> number().
+rhumb_calculate_q(DLat, DPsi, RadLat) ->
   try (DLat / DPsi)
   catch
     error:_ -> cos(RadLat)
@@ -144,7 +144,7 @@ rhumb_bounds_check_test() ->
   ?assertEqual(9001, rhumb_bounds_check(true, 0, 9001, 0)),
   ?assertEqual(9001, rhumb_bounds_check(false, 0, 0, 9001)).
 
-rhumb_q_test() ->
-  ?assertEqual(2.0, rhumb_q(10, 5, 9001)),
-  ?assertEqual(1.0, rhumb_q(9001, 0, 0)).
+rhumb_calculate_q_test() ->
+  ?assertEqual(2.0, rhumb_calculate_q(10, 5, 9001)),
+  ?assertEqual(1.0, rhumb_calculate_q(9001, 0, 0)).
 -endif.
