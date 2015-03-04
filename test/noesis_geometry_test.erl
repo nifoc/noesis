@@ -22,6 +22,10 @@ distance_test() ->
   ?assertEqual(2887.2599506071106, noesis_geometry:distance({-86.67, 36.12}, {-118.40, 33.94})),
   ?assertEqual(170.3043950254226, noesis_geometry:distance({-1.8494, 53.1472}, {0.1406, 52.2044})).
 
+rhumb_distance_test() ->
+  ?assertEqual(240, trunc(noesis_geometry:rhumb_distance({1.3380600000000065, 48.96572992335743}, {1.3380600000000065, 51.12556}))),
+  ?assertEqual(15000, round(noesis_geometry:rhumb_distance({1.33806, 51.12556}, {1.3380600000000318, -83.73457882378777}))).
+
 rhumb_destination_point_test() ->
   ?assertEqual({4.399965478328651,50.178752812432656}, noesis_geometry:rhumb_destination_point({1.33806, 51.12556}, 116, 240.23)),
   ?assertEqual({1.3380600000000065, 48.96572992335743}, noesis_geometry:rhumb_destination_point({1.33806, 51.12556}, 180, 240.23)),

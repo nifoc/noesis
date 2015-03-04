@@ -52,6 +52,7 @@
   lat/1,
   lng/1,
   distance/2,
+  rhumb_distance/2,
   rhumb_destination_point/3,
   rhumb_bearing_to/2,
   deg2rad/1,
@@ -72,14 +73,29 @@ lng({Lng, _Lat}) -> Lng.
 %      two points on the surface of a sphere.<br />
 %      `StartLng', `StartLat', `EndLng' and `EndLat' are all expected to be in degrees.
 -spec distance(coordinates(), coordinates()) -> number().
-distance({StartLng, StartLat}, {EndLng, EndLat}) ->
-  DLng = deg2rad(EndLng - StartLng),
-  DLat = deg2rad(EndLat - StartLat),
+distance({StartLng, StartLat}, {DestLng, DestLat}) ->
+  DLng = deg2rad(DestLng - StartLng),
+  DLat = deg2rad(DestLat - StartLat),
   RadStartLat = deg2rad(StartLat),
-  RadEndLat = deg2rad(EndLat),
-  A = pow(sin(DLat / 2), 2) + cos(RadStartLat) * cos(RadEndLat) * pow(sin(DLng / 2), 2),
+  RadDestLat = deg2rad(DestLat),
+  A = pow(sin(DLat / 2), 2) + cos(RadStartLat) * cos(RadDestLat) * pow(sin(DLng / 2), 2),
   C = 2 * asin(sqrt(A)),
   ?R * C.
+
+% @doc Given a starting point and a destination point, this will calculate the distance between the two.<br />
+%      `StartPoint' and `DestPoint' are both expected to be in degrees.<br /><br />
+%      Partially based on <a href="http://www.movable-type.co.uk/scripts/latlong.html">Movable Type Scripts</a> by Chris Veness.
+-spec rhumb_distance(coordinates(), coordinates()) -> number().
+rhumb_distance({StartLng, StartLat}, {DestLng, DestLat}) ->
+  DLng = deg2rad(abs(DestLng - StartLng)),
+  DLat = deg2rad(DestLat - StartLat),
+  RadStartLat = deg2rad(StartLat),
+  RadDestLat = deg2rad(DestLat),
+  DPsi = log(tan(RadDestLat / 2 + ?PI_FOURTH) / tan(RadStartLat / 2 + ?PI_FOURTH)),
+  Q = rhumb_calculate_q(DLat, DPsi, RadStartLat),
+  DLng2 = rhumb_bounds_check((abs(DLng) > ?PI), -(2 * ?PI - DLng), (2 * ?PI + DLng), DLng),
+  Delta = sqrt(DLat * DLat + Q * Q * DLng2 * DLng2),
+  ?R * Delta.
 
 % @doc Given a starting point, a bearing and a distance, this will calculate the destination point.
 %      If you maintain a constant bearing along a rhumb line, you will gradually spiral in towards one of the poles.<br />
