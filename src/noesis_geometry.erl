@@ -34,9 +34,9 @@
 -include_lib("eunit/include/eunit.hrl").
 -endif.
 
--define(PI, math:pi()).
--define(PI_HALF, math:pi() / 2).
--define(PI_FOURTH, math:pi() / 4).
+-define(PI, 3.141592653589793). % math:pi()
+-define(PI_HALF, 1.5707963267948966). % math:pi() / 2
+-define(PI_FOURTH, 0.7853981633974483). % math:pi() / 4
 -define(R, 6372.8). % Earth radius
 
 % Types
