@@ -55,6 +55,8 @@
 -export([
   lat/1,
   lng/1,
+  north_east/1,
+  south_west/1,
   distance/2,
   rhumb_distance/2,
   rhumb_destination_point/3,
@@ -72,6 +74,14 @@ lat({_Lng, Lat}) -> Lat.
 % @doc Returns the longitude value of a `coordinates()' tuple.
 -spec lng(coordinates()) -> number().
 lng({Lng, _Lat}) -> Lng.
+
+% @doc Returns the NE value of a `bounds()' tuple.
+-spec north_east(bounds()) -> coordinates().
+north_east({NE, _SW}) -> NE.
+
+% @doc Returns the SW value of a `bounds()' tuple.
+-spec south_west(bounds()) -> coordinates().
+south_west({_NE, SW}) -> SW.
 
 % @doc Calculates the great-circle distance between two coordinates, that is the shortest distance between
 %      two points on the surface of a sphere.<br />

@@ -18,6 +18,12 @@ lat_test() ->
 lng_test() ->
   ?assertEqual(1, noesis_geometry:lng({1, 9001})).
 
+north_east_test() ->
+  ?assertEqual({9001, 1}, noesis_geometry:north_east({{9001, 1}, {0, 0}})).
+
+south_west_test() ->
+  ?assertEqual({0, 0}, noesis_geometry:south_west({{9001, 1}, {0, 0}})).
+
 distance_test() ->
   ?assertEqual(2887.2599506071106, noesis_geometry:distance({-86.67, 36.12}, {-118.40, 33.94})),
   ?assertEqual(170.3043950254226, noesis_geometry:distance({-1.8494, 53.1472}, {0.1406, 52.2044})).
