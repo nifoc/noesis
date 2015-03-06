@@ -42,9 +42,13 @@
 % Types
 
 -type coordinates() :: {Longitude :: number(), Latitude :: number()}.
+-type path() :: [coordinates()].
+-type bounds() :: {NorthEast :: coordinates(), SouthWest :: coordinates()}.
 
 -export_type([
-  coordinates/0
+  coordinates/0,
+  path/0,
+  bounds/0
 ]).
 
 % API
