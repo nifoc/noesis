@@ -84,7 +84,7 @@ north_east({NE, _SW}) -> NE.
 -spec south_west(bounds()) -> coordinates().
 south_west({_NE, SW}) -> SW.
 
-% @doc Returns the center point of a `bounds()' tuple.
+% @doc Calculates the center point of a `bounds()' tuple.
 -spec center(bounds()) -> coordinates().
 center({{NELng, NELat}, {SWLng, SWLat}}) ->
   Lng = SWLng + (NELng - SWLng) / 2,
