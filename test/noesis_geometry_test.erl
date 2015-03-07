@@ -24,6 +24,9 @@ north_east_test() ->
 south_west_test() ->
   ?assertEqual({0, 0}, noesis_geometry:south_west({{9001, 1}, {0, 0}})).
 
+center_test() ->
+  ?assertEqual({0.5, 0.5}, noesis_geometry:center({{0, 0}, {1, 1}})).
+
 distance_test() ->
   ?assertEqual(2887.2599506071106, noesis_geometry:distance({-86.67, 36.12}, {-118.40, 33.94})),
   ?assertEqual(170.3043950254226, noesis_geometry:distance({-1.8494, 53.1472}, {0.1406, 52.2044})).

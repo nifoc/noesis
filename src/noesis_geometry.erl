@@ -57,6 +57,7 @@
   lng/1,
   north_east/1,
   south_west/1,
+  center/1,
   distance/2,
   rhumb_distance/2,
   rhumb_destination_point/3,
@@ -82,6 +83,13 @@ north_east({NE, _SW}) -> NE.
 % @doc Returns the SW value of a `bounds()' tuple.
 -spec south_west(bounds()) -> coordinates().
 south_west({_NE, SW}) -> SW.
+
+% @doc Returns the center point of a `bounds()' tuple.
+-spec center(bounds()) -> coordinates().
+center({{NELng, NELat}, {SWLng, SWLat}}) ->
+  Lng = SWLng + (NELng - SWLng) / 2,
+  Lat = SWLat + (NELat - SWLat) / 2,
+  {Lng, Lat}.
 
 % @doc Calculates the great-circle distance between two coordinates, that is the shortest distance between
 %      two points on the surface of a sphere.<br />
