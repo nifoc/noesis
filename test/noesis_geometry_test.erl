@@ -25,7 +25,12 @@ south_west_test() ->
   ?assertEqual({0, 0}, noesis_geometry:south_west({{9001, 1}, {0, 0}})).
 
 center_test() ->
-  ?assertEqual({0.5, 0.5}, noesis_geometry:center({{0, 0}, {1, 1}})).
+  ?assertEqual({15.0, 15.0}, noesis_geometry:center({{20, 20}, {10, 10}})),
+  ?assertEqual({-165.0, 15.0}, noesis_geometry:center({{10, 10}, {20, 20}})).
+
+crosses_antimeridian_test() ->
+  ?assertEqual(false, noesis_geometry:crosses_antimeridian({{5, 0}, {1, 0}})),
+  ?assertEqual(true, noesis_geometry:crosses_antimeridian({{5, 0}, {10, 0}})).
 
 distance_test() ->
   ?assertEqual(2887.2599506071106, noesis_geometry:distance({-86.67, 36.12}, {-118.40, 33.94})),
@@ -56,3 +61,14 @@ rad2deg_test() ->
   ?assertEqual(57.29577951308232, noesis_geometry:rad2deg(1)),
   ?assertEqual(1.0, noesis_geometry:rad2deg(0.017453292519943295)),
   ?assertEqual({1.0, 57.29577951308232}, noesis_geometry:rad2deg({0.017453292519943295, 1})).
+
+normalize_lat_test() ->
+  ?assertEqual(90.0, noesis_geometry:normalize_lat(91)),
+  ?assertEqual(-90.0, noesis_geometry:normalize_lat(-91)),
+  ?assertEqual(10.0, noesis_geometry:normalize_lat(10)).
+
+normalize_lng_test() ->
+  ?assertEqual(180.0, noesis_geometry:normalize_lng(180)),
+  ?assertEqual(179.0, noesis_geometry:normalize_lng(-181)),
+  ?assertEqual(-179.0, noesis_geometry:normalize_lng(181)),
+  ?assertEqual(10.0, noesis_geometry:normalize_lng(10)).

@@ -58,12 +58,15 @@
   north_east/1,
   south_west/1,
   center/1,
+  crosses_antimeridian/1,
   distance/2,
   rhumb_distance/2,
   rhumb_destination_point/3,
   rhumb_bearing_to/2,
   deg2rad/1,
-  rad2deg/1
+  rad2deg/1,
+  normalize_lat/1,
+  normalize_lng/1
 ]).
 
 % API
@@ -86,10 +89,19 @@ south_west({_NE, SW}) -> SW.
 
 % @doc Calculates the center point of a `bounds()' tuple.
 -spec center(bounds()) -> coordinates().
-center({{NELng, NELat}, {SWLng, SWLat}}) ->
-  Lng = SWLng + (NELng - SWLng) / 2,
-  Lat = SWLat + (NELat - SWLat) / 2,
+center({{NELng, NELat}, {SWLng, SWLat}}=Bounds) ->
+  Lng = case crosses_antimeridian(Bounds) of
+    true ->
+      Span = lng_span(SWLng, NELng),
+      normalize_lng(SWLng + Span / 2);
+    false -> (SWLng + NELng) / 2
+  end,
+  Lat = (SWLat + NELat) / 2,
   {Lng, Lat}.
+
+% @doc Returns whether or not the bounds intersect the antimeridian.
+-spec crosses_antimeridian(bounds()) -> boolean().
+crosses_antimeridian({{NELng, _NELat}, {SWLng, _SWLat}}) -> SWLng > NELng.
 
 % @doc Calculates the great-circle distance between two coordinates, that is the shortest distance between
 %      two points on the surface of a sphere.<br />
@@ -140,7 +152,7 @@ rhumb_destination_point(Point, Bearing, Distance) ->
 % @doc Given a starting point and a destination point, this will calculate the bearing between the two.<br />
 %      `StartPoint' and `DestPoint' are both expected to be in degrees.<br /><br />
 %      Partially based on <a href="http://www.movable-type.co.uk/scripts/latlong.html">Movable Type Scripts</a> by Chris Veness.
--spec rhumb_bearing_to(coordinates(), coordinates()) -> number().
+-spec rhumb_bearing_to(coordinates(), coordinates()) -> float().
 rhumb_bearing_to(StartPoint, DestPoint) ->
   {RadStartLng, RadStartLat} = deg2rad(StartPoint),
   {RadDestLng, RadDestLat} = deg2rad(DestPoint),
@@ -160,7 +172,27 @@ deg2rad(Deg) -> ?PI * Deg / 180.
 rad2deg({Lng, Lat}) -> {rad2deg(Lng), rad2deg(Lat)};
 rad2deg(Rad) -> 180 * Rad / ?PI.
 
+% @doc Normalizes a latitude to the `[-90, 90]' range. Latitudes above 90 or below -90 are capped, not wrapped.
+-spec normalize_lat(number()) -> float().
+normalize_lat(Lat) -> float(max(-90, min(90, Lat))).
+
+% @doc Normalizes a longitude to the `[-180, 180]' range. Longitudes above 180 or below -180 are wrapped.
+-spec normalize_lng(number()) -> float().
+normalize_lng(Lng) ->
+  Lng2 = fmod(Lng, 360),
+  normalize_lng2(Lng2).
+
 % Private
+
+-spec lng_span(number(), number()) -> number().
+lng_span(West, East) when West > East -> East + 360 - West;
+lng_span(West, East) -> East - West.
+
+-spec normalize_lng2(number()) -> float().
+normalize_lng2(Lng) when Lng == 180 -> 180.0;
+normalize_lng2(Lng) when Lng < -180 -> Lng + 360.0;
+normalize_lng2(Lng) when Lng > 180 -> Lng - 360.0;
+normalize_lng2(Lng) -> float(Lng).
 
 -spec rhumb_bounds_check(boolean(), number(), number(), number()) -> number().
 rhumb_bounds_check(true, GtZero, _LteZero, Default) when Default > 0 -> GtZero;
