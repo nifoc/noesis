@@ -58,6 +58,7 @@
   north_east/1,
   south_west/1,
   center/1,
+  contains_point/2,
   crosses_antimeridian/1,
   distance/2,
   rhumb_distance/2,
@@ -99,6 +100,16 @@ center({{NELng, NELat}, {SWLng, SWLat}}=Bounds) ->
   end,
   Lat = (SWLat + NELat) / 2,
   {Lng, Lat}.
+
+% @doc Checks whether or not a given point is inside the supplied `bounds()' tuple.
+-spec contains_point(bounds(), coordinates()) -> boolean().
+contains_point({{_NELng, NELat}, {_SWLng, SWLat}}, {_Lng, Lat}) when SWLat > Lat; Lat > NELat ->
+  false;
+contains_point({{NELng, _NELat}, {SWLng, _SWLat}}=Bounds, {Lng, _Lat}) ->
+  case crosses_antimeridian(Bounds) of
+    true -> (Lng =< NELng) or (Lng >= SWLng);
+    false -> (SWLng =< Lng) and (Lng =< NELng)
+  end.
 
 % @doc Returns whether or not the bounds intersect the antimeridian.
 -spec crosses_antimeridian(bounds()) -> boolean().
@@ -181,7 +192,7 @@ normalize_lat(Lat) -> float(max(-90, min(90, Lat))).
 -spec normalize_lng(number()) -> float().
 normalize_lng(Lng) ->
   Lng2 = fmod(Lng, 360),
-  normalize_lng2(Lng2).
+  normalize_lng_bounds(Lng2).
 
 % @doc Normalizes a bearing to the `[0, 360]' range. Bearings above 360 or below 0 are wrapped.
 -spec normalize_bearing(number()) -> float().
@@ -193,11 +204,11 @@ normalize_bearing(Bearing) -> fmod((fmod(Bearing, 360) + 360), 360).
 lng_span(West, East) when West > East -> East + 360 - West;
 lng_span(West, East) -> East - West.
 
--spec normalize_lng2(number()) -> float().
-normalize_lng2(Lng) when Lng == 180 -> 180.0;
-normalize_lng2(Lng) when Lng < -180 -> Lng + 360.0;
-normalize_lng2(Lng) when Lng > 180 -> Lng - 360.0;
-normalize_lng2(Lng) -> float(Lng).
+-spec normalize_lng_bounds(number()) -> float().
+normalize_lng_bounds(Lng) when Lng == 180 -> 180.0;
+normalize_lng_bounds(Lng) when Lng < -180 -> Lng + 360.0;
+normalize_lng_bounds(Lng) when Lng > 180 -> Lng - 360.0;
+normalize_lng_bounds(Lng) -> float(Lng).
 
 -spec rhumb_bounds_check(boolean(), number(), number(), number()) -> number().
 rhumb_bounds_check(true, GtZero, _LteZero, Default) when Default > 0 -> GtZero;
