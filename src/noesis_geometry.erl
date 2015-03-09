@@ -105,11 +105,8 @@ center({{NELng, NELat}, {SWLng, SWLat}}=Bounds) ->
 -spec contains_point(bounds(), coordinates()) -> boolean().
 contains_point({{_NELng, NELat}, {_SWLng, SWLat}}, {_Lng, Lat}) when SWLat > Lat; Lat > NELat ->
   false;
-contains_point({{NELng, _NELat}, {SWLng, _SWLat}}=Bounds, {Lng, _Lat}) ->
-  case crosses_antimeridian(Bounds) of
-    true -> (Lng =< NELng) or (Lng >= SWLng);
-    false -> (SWLng =< Lng) and (Lng =< NELng)
-  end.
+contains_point(Bounds, Point) ->
+  contains_lng(Bounds, Point).
 
 % @doc Returns whether or not the bounds intersect the antimeridian.
 -spec crosses_antimeridian(bounds()) -> boolean().
@@ -203,6 +200,13 @@ normalize_bearing(Bearing) -> fmod((fmod(Bearing, 360) + 360), 360).
 -spec lng_span(number(), number()) -> number().
 lng_span(West, East) when West > East -> East + 360 - West;
 lng_span(West, East) -> East - West.
+
+-spec contains_lng(bounds(), coordinates()) -> boolean().
+contains_lng({{NELng, _NELat}, {SWLng, _SWLat}}=Bounds, {Lng, _Lat}) ->
+  case crosses_antimeridian(Bounds) of
+    true -> (Lng =< NELng) or (Lng >= SWLng);
+    false -> (SWLng =< Lng) and (Lng =< NELng)
+  end.
 
 -spec normalize_lng_bounds(number()) -> float().
 normalize_lng_bounds(Lng) when Lng == 180 -> 180.0;
