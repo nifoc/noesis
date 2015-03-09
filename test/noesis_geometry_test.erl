@@ -72,3 +72,7 @@ normalize_lng_test() ->
   ?assertEqual(179.0, noesis_geometry:normalize_lng(-181)),
   ?assertEqual(-179.0, noesis_geometry:normalize_lng(181)),
   ?assertEqual(10.0, noesis_geometry:normalize_lng(10)).
+
+normalize_bearing_test() ->
+  ?assertEqual(1.0, noesis_geometry:normalize_bearing(361)),
+  ?assertEqual(359.0, noesis_geometry:normalize_bearing(-361)).

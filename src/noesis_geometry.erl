@@ -66,7 +66,8 @@
   deg2rad/1,
   rad2deg/1,
   normalize_lat/1,
-  normalize_lng/1
+  normalize_lng/1,
+  normalize_bearing/1
 ]).
 
 % API
@@ -160,7 +161,7 @@ rhumb_bearing_to(StartPoint, DestPoint) ->
   DPsi = log(tan(RadDestLat / 2 + ?PI_FOURTH) / tan(RadStartLat / 2 + ?PI_FOURTH)),
   DLng2 = rhumb_bounds_check((abs(DLng) > ?PI), -(2 * ?PI - DLng), (2 * ?PI + DLng), DLng),
   Bearing = rad2deg(atan2(DLng2, DPsi)),
-  fmod(Bearing + 360, 360).
+  normalize_bearing(Bearing).
 
 % @doc Converts degrees to radians.
 -spec deg2rad(number() | coordinates()) -> number() | coordinates().
@@ -181,6 +182,10 @@ normalize_lat(Lat) -> float(max(-90, min(90, Lat))).
 normalize_lng(Lng) ->
   Lng2 = fmod(Lng, 360),
   normalize_lng2(Lng2).
+
+% @doc Normalizes a bearing to the `[0, 360]' range. Bearings above 360 or below 0 are wrapped.
+-spec normalize_bearing(number()) -> float().
+normalize_bearing(Bearing) -> fmod((fmod(Bearing, 360) + 360), 360).
 
 % Private
 
