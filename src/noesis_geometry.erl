@@ -229,6 +229,10 @@ rhumb_calculate_q(DLat, DPsi, RadLat) ->
 % Tests (private functions)
 
 -ifdef(TEST).
+lng_span_test() ->
+  ?assertEqual(350, lng_span(20, 10)),
+  ?assertEqual(0, lng_span(10, 10)).
+
 rhumb_bounds_check_test() ->
   ?assertEqual(9001, rhumb_bounds_check(true, 9001, 0, 1)),
   ?assertEqual(9001, rhumb_bounds_check(true, 0, 9001, 0)),
