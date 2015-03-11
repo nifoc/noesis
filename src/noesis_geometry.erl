@@ -59,6 +59,7 @@
   south_west/1,
   center/1,
   contains_point/2,
+  extend/2,
   crosses_antimeridian/1,
   distance/2,
   rhumb_distance/2,
@@ -107,6 +108,20 @@ contains_point({{_NELng, NELat}, {_SWLng, SWLat}}, {_Lng, Lat}) when SWLat > Lat
   false;
 contains_point(Bounds, Point) ->
   contains_lng(Bounds, Point).
+
+% @doc Extends the `bounds()' tuple by the given point, if the bounds don't already contain the point.
+-spec extend(bounds(), coordinates()) -> bounds().
+extend({{NELng, NELat}, {SWLng, SWLat}}=Bounds, {Lng, Lat}=Point) ->
+  NELat2 = max(NELat, Lat),
+  SWLat2 = min(SWLat, Lat),
+  case contains_lng(Bounds, Point) of
+    true -> {{NELng, NELat2}, {SWLng, SWLat2}};
+    false ->
+      case lng_span(SWLng, Lng) =< lng_span(Lng, NELng) of
+        true -> {{Lng, NELat2}, {SWLng, SWLat2}};
+        false -> {{NELng, NELat2}, {Lng, SWLat2}}
+      end
+  end.
 
 % @doc Returns whether or not the bounds intersect the antimeridian.
 -spec crosses_antimeridian(bounds()) -> boolean().

@@ -38,6 +38,11 @@ contains_point_test() ->
   ?assertEqual(false, noesis_geometry:contains_point({{10, 10}, {20, 20}}, {-165.0, 15.0})),
   ?assertEqual(false, noesis_geometry:contains_point({{12, 9}, {11, 130}}, {11.5, 69.5})).
 
+extend_test() ->
+  ?assertEqual({{20.0, 20.0}, {10.0, 10.0}}, noesis_geometry:extend({{20.0, 20.0}, {10.0, 10.0}}, {15.0, 15.0})),
+  ?assertEqual({{30.0, 30.0}, {10.0, 10.0}}, noesis_geometry:extend({{20.0, 20.0}, {10.0, 10.0}}, {30.0, 30.0})),
+  ?assertEqual({{30.0, 20.0}, {10.0, 5.0}}, noesis_geometry:extend({{20.0, 20.0}, {10.0, 10.0}}, {30.0, 5.0})).
+
 crosses_antimeridian_test() ->
   ?assertEqual(false, noesis_geometry:crosses_antimeridian({{5, 0}, {1, 0}})),
   ?assertEqual(true, noesis_geometry:crosses_antimeridian({{5, 0}, {10, 0}})).
