@@ -9,6 +9,8 @@
   noesis_lists_test,
   noesis_lists_triq,
   noesis_math_test,
+  noesis_polyline_test,
+  noesis_polyline_triq,
   noesis_proplists_test,
   noesis_proplists_triq,
   noesis_string_test,

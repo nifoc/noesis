@@ -31,12 +31,14 @@
 
 -type timestamp() :: non_neg_integer().
 -type rfc1123() :: <<_:232>>.
+-type iso8601() :: binary().
 -type comparison_op() :: lt | lte | eq | gt | gte.
 -type range() :: range_seconds() | range_minutes() | range_hours() | range_days() | range_weeks().
 
 -export_type([
   timestamp/0,
   rfc1123/0,
+  iso8601/0,
   comparison_op/0,
   range/0
 ]).
@@ -93,7 +95,7 @@ timestamp_to_rfc1123(Timestamp) ->
   rfc1123(DateTime).
 
 % @doc Converts a Unix timestamp to an ISO 8601 formatted binary string.
--spec timestamp_to_iso8601(timestamp()) -> rfc1123().
+-spec timestamp_to_iso8601(timestamp()) -> iso8601().
 timestamp_to_iso8601(Timestamp) ->
   DateTime = timestamp_to_datetime(Timestamp),
   iso8601(DateTime).
@@ -157,14 +159,14 @@ rfc1123_to_timestamp(RFC) ->
 
 % @doc Returns the current date and time (UTC) according to ISO 8601.<br /><br />
 %      This function has only been tested under very specific circumstances.
--spec iso8601() -> binary().
+-spec iso8601() -> iso8601().
 iso8601() ->
   Now = calendar:universal_time(),
   iso8601(Now).
 
 % @doc Formats any `calendar:datetime()' (UTC) according to ISO 8601.<br /><br />
 %      This function has only been tested under very specific circumstances.
--spec iso8601(calendar:datetime()) -> binary().
+-spec iso8601(calendar:datetime()) -> iso8601().
 iso8601({{Year, Month, Day}, {Hour, Minute, Second}}) ->
   Formatted = io_lib:format("~4..0w-~2..0w-~2..0wT~2..0w:~2..0w:~2..0wZ", [Year, Month, Day, Hour, Minute, Second]),
   unicode:characters_to_binary(Formatted).
@@ -172,7 +174,7 @@ iso8601({{Year, Month, Day}, {Hour, Minute, Second}}) ->
 % @doc Parses an ISO 8601 binary string into `calendar:datetime()'.<br />
 %      Timezones are <strong>not</strong> handled at all.<br /><br />
 %      This function has only been tested under very specific circumstances.
--spec iso8601_to_datetime(binary()) -> calendar:datetime().
+-spec iso8601_to_datetime(iso8601()) -> calendar:datetime().
 iso8601_to_datetime(<<Y:4/binary, "-", Mo:2/binary, "-", D:2/binary, _Sep:1/binary, H:2/binary, ":", Mi:2/binary, ":", S:2/binary, _Rest/binary>>) ->
   Year = binary_to_integer(Y),
   Month = binary_to_integer(Mo),
@@ -185,7 +187,7 @@ iso8601_to_datetime(<<Y:4/binary, "-", Mo:2/binary, "-", D:2/binary, _Sep:1/bina
 % @doc Parses an ISO 8601 binary string into a Unix timestamp.<br />
 %      Timezones are <strong>not</strong> handled at all.<br /><br />
 %      This function has only been tested under very specific circumstances.
--spec iso8601_to_timestamp(binary()) -> timestamp().
+-spec iso8601_to_timestamp(iso8601()) -> timestamp().
 iso8601_to_timestamp(ISO) ->
   DateTime = iso8601_to_datetime(ISO),
   timestamp(DateTime).

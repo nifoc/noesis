@@ -14,9 +14,7 @@
 
 % Generators
 
-non_neg_int() -> ?SUCHTHAT(I, int(), I >= 0).
-
-binary_hex() -> ?LET(I, non_neg_int(), binary:encode_unsigned(I)).
+binary_hex() -> ?LET(I, non_neg_integer(), binary:encode_unsigned(I)).
 
 % Properties
 

@@ -41,11 +41,17 @@
 
 % Types
 
--type coordinates() :: {Longitude :: number(), Latitude :: number()}.
+-type latitude() :: number().
+-type longitude() :: number().
+-type bearing() :: number().
+-type coordinates() :: {Longitude :: longitude(), Latitude :: latitude()}.
 -type path() :: [coordinates()].
 -type bounds() :: {NorthEast :: coordinates(), SouthWest :: coordinates()}.
 
 -export_type([
+  latitude/0,
+  longitude/0,
+  bearing/0,
   coordinates/0,
   path/0,
   bounds/0
@@ -75,11 +81,11 @@
 % API
 
 % @doc Returns the latitude value of a `coordinates()' tuple.
--spec lat(coordinates()) -> number().
+-spec lat(coordinates()) -> latitude().
 lat({_Lng, Lat}) -> Lat.
 
 % @doc Returns the longitude value of a `coordinates()' tuple.
--spec lng(coordinates()) -> number().
+-spec lng(coordinates()) -> longitude().
 lng({Lng, _Lat}) -> Lng.
 
 % @doc Returns the NE value of a `bounds()' tuple.
@@ -159,7 +165,7 @@ rhumb_distance({StartLng, StartLat}, {DestLng, DestLat}) ->
 %      If you maintain a constant bearing along a rhumb line, you will gradually spiral in towards one of the poles.<br />
 %      `Point' and `Bearing' are both expected to be in degrees. `Distance' is expected to be in kilometers.<br /><br />
 %      Based on <a href="http://www.movable-type.co.uk/scripts/latlong.html">Movable Type Scripts</a> by Chris Veness.
--spec rhumb_destination_point(coordinates(), number(), number()) -> coordinates().
+-spec rhumb_destination_point(coordinates(), bearing(), number()) -> coordinates().
 rhumb_destination_point(Point, Bearing, Distance) ->
   D = Distance / ?R,
   {RadLng, RadLat} = deg2rad(Point),
@@ -197,22 +203,22 @@ rad2deg({Lng, Lat}) -> {rad2deg(Lng), rad2deg(Lat)};
 rad2deg(Rad) -> 180 * Rad / ?PI.
 
 % @doc Normalizes a latitude to the `[-90, 90]' range. Latitudes above 90 or below -90 are capped, not wrapped.
--spec normalize_lat(number()) -> float().
+-spec normalize_lat(latitude()) -> latitude().
 normalize_lat(Lat) -> float(max(-90, min(90, Lat))).
 
 % @doc Normalizes a longitude to the `[-180, 180]' range. Longitudes above 180 or below -180 are wrapped.
--spec normalize_lng(number()) -> float().
+-spec normalize_lng(longitude()) -> longitude().
 normalize_lng(Lng) ->
   Lng2 = fmod(Lng, 360),
   normalize_lng_bounds(Lng2).
 
 % @doc Normalizes a bearing to the `[0, 360]' range. Bearings above 360 or below 0 are wrapped.
--spec normalize_bearing(number()) -> float().
+-spec normalize_bearing(bearing()) -> bearing().
 normalize_bearing(Bearing) -> fmod((fmod(Bearing, 360) + 360), 360).
 
 % Private
 
--spec lng_span(number(), number()) -> number().
+-spec lng_span(longitude(), longitude()) -> number().
 lng_span(West, East) when West > East -> East + 360 - West;
 lng_span(West, East) -> East - West.
 
@@ -223,7 +229,7 @@ contains_lng({{NELng, _NELat}, {SWLng, _SWLat}}=Bounds, {Lng, _Lat}) ->
     false -> (SWLng =< Lng) and (Lng =< NELng)
   end.
 
--spec normalize_lng_bounds(number()) -> float().
+-spec normalize_lng_bounds(longitude()) -> float().
 normalize_lng_bounds(Lng) when Lng == 180 -> 180.0;
 normalize_lng_bounds(Lng) when Lng < -180 -> Lng + 360.0;
 normalize_lng_bounds(Lng) when Lng > 180 -> Lng - 360.0;
