@@ -80,23 +80,23 @@
 
 % API
 
-% @doc Returns the latitude value of a `coordinates()' tuple.
+% @doc Returns the latitude value of a {@link coordinates()} tuple.
 -spec lat(Coordinates :: coordinates()) -> latitude().
 lat({_Lng, Lat}) -> Lat.
 
-% @doc Returns the longitude value of a `coordinates()' tuple.
+% @doc Returns the longitude value of a {@link coordinates()} tuple.
 -spec lng(Coordinates :: coordinates()) -> longitude().
 lng({Lng, _Lat}) -> Lng.
 
-% @doc Returns the NE value of a `bounds()' tuple.
+% @doc Returns the NE value of a {@link bounds()} tuple.
 -spec north_east(Bounds :: bounds()) -> coordinates().
 north_east({NE, _SW}) -> NE.
 
-% @doc Returns the SW value of a `bounds()' tuple.
+% @doc Returns the SW value of a {@link bounds()} tuple.
 -spec south_west(Bounds :: bounds()) -> coordinates().
 south_west({_NE, SW}) -> SW.
 
-% @doc Calculates the center point of a `bounds()' tuple.
+% @doc Calculates the center point of a {@link bounds()} tuple.
 -spec center(bounds()) -> coordinates().
 center({{NELng, NELat}, {SWLng, SWLat}}=Bounds) ->
   Lng = case crosses_antimeridian(Bounds) of
@@ -108,14 +108,14 @@ center({{NELng, NELat}, {SWLng, SWLat}}=Bounds) ->
   Lat = (SWLat + NELat) / 2,
   {Lng, Lat}.
 
-% @doc Checks whether or not a given point is inside the supplied `bounds()' tuple.
+% @doc Checks whether or not a given point is inside the supplied {@link bounds()} tuple.
 -spec contains_point(bounds(), coordinates()) -> boolean().
 contains_point({{_NELng, NELat}, {_SWLng, SWLat}}, {_Lng, Lat}) when SWLat > Lat; Lat > NELat ->
   false;
 contains_point(Bounds, Point) ->
   contains_lng(Bounds, Point).
 
-% @doc Extends the `bounds()' tuple by the given point, if the bounds don't already contain the point.
+% @doc Extends the {@link bounds()} tuple by the given point, if the bounds don't already contain the point.
 -spec extend(bounds(), coordinates()) -> bounds().
 extend({{NELng, NELat}, {SWLng, SWLat}}=Bounds, {Lng, Lat}=Point) ->
   NELat2 = max(NELat, Lat),
