@@ -67,7 +67,7 @@ get_value(Key, List, Default) ->
   end.
 
 % @doc Removes multiple keys from a property list and returns a new one. Duplicate keys are also removed.
--spec delete_keys([term()], proplist()) -> proplist().
+-spec delete_keys(Keys :: [term()], proplist()) -> proplist().
 delete_keys([], List) ->
   List;
 delete_keys([Key|Rest]=Keys, List) ->

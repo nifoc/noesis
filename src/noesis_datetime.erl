@@ -130,7 +130,7 @@ rfc1123() ->
 
 % @doc Formats any `calendar:datetime()' (UTC) according to RFC 1123.<br /><br />
 %      This function has only been tested under very specific circumstances.
--spec rfc1123(calendar:datetime()) -> rfc1123().
+-spec rfc1123(DateTime :: calendar:datetime()) -> rfc1123().
 rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
   Weekday = calendar:day_of_the_week({Year, Month, Day}),
   Dayname = rfc1123_dayname(Weekday),
@@ -140,7 +140,7 @@ rfc1123({{Year, Month, Day}, {Hour, Minute, Second}}) ->
 
 % @doc Parses a RFC 1123 binary string into `calendar:datetime()'.<br /><br />
 %      This function has only been tested under very specific circumstances.
--spec rfc1123_to_datetime(rfc1123()) -> calendar:datetime().
+-spec rfc1123_to_datetime(DateTime :: rfc1123()) -> calendar:datetime().
 rfc1123_to_datetime(<<_DName:3/binary, ", ", D:2/binary, " ", MName:3/binary, " ", Y:4/binary, " ", H:2/binary, ":", M:2/binary, ":", S:2/binary, " GMT">>) ->
   Year = binary_to_integer(Y),
   Month = rfc1123_monthnum(MName),
@@ -166,7 +166,7 @@ iso8601() ->
 
 % @doc Formats any `calendar:datetime()' (UTC) according to ISO 8601.<br /><br />
 %      This function has only been tested under very specific circumstances.
--spec iso8601(calendar:datetime()) -> iso8601().
+-spec iso8601(DateTime :: calendar:datetime()) -> iso8601().
 iso8601({{Year, Month, Day}, {Hour, Minute, Second}}) ->
   Formatted = io_lib:format("~4..0w-~2..0w-~2..0wT~2..0w:~2..0w:~2..0wZ", [Year, Month, Day, Hour, Minute, Second]),
   unicode:characters_to_binary(Formatted).
@@ -174,7 +174,7 @@ iso8601({{Year, Month, Day}, {Hour, Minute, Second}}) ->
 % @doc Parses an ISO 8601 binary string into `calendar:datetime()'.<br />
 %      Timezones are <strong>not</strong> handled at all.<br /><br />
 %      This function has only been tested under very specific circumstances.
--spec iso8601_to_datetime(iso8601()) -> calendar:datetime().
+-spec iso8601_to_datetime(DateTime :: iso8601()) -> calendar:datetime().
 iso8601_to_datetime(<<Y:4/binary, "-", Mo:2/binary, "-", D:2/binary, _Sep:1/binary, H:2/binary, ":", Mi:2/binary, ":", S:2/binary, _Rest/binary>>) ->
   Year = binary_to_integer(Y),
   Month = binary_to_integer(Mo),

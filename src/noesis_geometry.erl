@@ -81,19 +81,19 @@
 % API
 
 % @doc Returns the latitude value of a `coordinates()' tuple.
--spec lat(coordinates()) -> latitude().
+-spec lat(Coordinates :: coordinates()) -> latitude().
 lat({_Lng, Lat}) -> Lat.
 
 % @doc Returns the longitude value of a `coordinates()' tuple.
--spec lng(coordinates()) -> longitude().
+-spec lng(Coordinates :: coordinates()) -> longitude().
 lng({Lng, _Lat}) -> Lng.
 
 % @doc Returns the NE value of a `bounds()' tuple.
--spec north_east(bounds()) -> coordinates().
+-spec north_east(Bounds :: bounds()) -> coordinates().
 north_east({NE, _SW}) -> NE.
 
 % @doc Returns the SW value of a `bounds()' tuple.
--spec south_west(bounds()) -> coordinates().
+-spec south_west(Bounds :: bounds()) -> coordinates().
 south_west({_NE, SW}) -> SW.
 
 % @doc Calculates the center point of a `bounds()' tuple.
@@ -130,13 +130,13 @@ extend({{NELng, NELat}, {SWLng, SWLat}}=Bounds, {Lng, Lat}=Point) ->
   end.
 
 % @doc Returns whether or not the bounds intersect the antimeridian.
--spec crosses_antimeridian(bounds()) -> boolean().
+-spec crosses_antimeridian(Bounds :: bounds()) -> boolean().
 crosses_antimeridian({{NELng, _NELat}, {SWLng, _SWLat}}) -> SWLng > NELng.
 
 % @doc Calculates the great-circle distance between two coordinates, that is the shortest distance between
 %      two points on the surface of a sphere.<br />
 %      `StartLng', `StartLat', `EndLng' and `EndLat' are all expected to be in degrees.
--spec distance(coordinates(), coordinates()) -> number().
+-spec distance(StartCoordinates :: coordinates(), DestCoordinates :: coordinates()) -> number().
 distance({StartLng, StartLat}, {DestLng, DestLat}) ->
   DLng = deg2rad(DestLng - StartLng),
   DLat = deg2rad(DestLat - StartLat),
@@ -149,7 +149,7 @@ distance({StartLng, StartLat}, {DestLng, DestLat}) ->
 % @doc Given a starting point and a destination point, this will calculate the distance between the two.<br />
 %      `StartPoint' and `DestPoint' are both expected to be in degrees.<br /><br />
 %      Partially based on <a href="http://www.movable-type.co.uk/scripts/latlong.html">Movable Type Scripts</a> by Chris Veness.
--spec rhumb_distance(coordinates(), coordinates()) -> number().
+-spec rhumb_distance(StartCoordinates :: coordinates(), DestCoordinates :: coordinates()) -> number().
 rhumb_distance({StartLng, StartLat}, {DestLng, DestLat}) ->
   DLng = deg2rad(abs(DestLng - StartLng)),
   DLat = deg2rad(DestLat - StartLat),
