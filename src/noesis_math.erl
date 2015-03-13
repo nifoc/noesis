@@ -30,14 +30,18 @@ fmod(X, Y) ->
   Div = float(trunc(X / Y)),
   X - Div * Y.
 
-floor(X) when X < 0 ->
+% @doc Returns the largest integer less than or equal to a given number.
+-spec floor(number()) -> integer().
+floor(X) when X >= 0 -> trunc(X);
+floor(X) ->
   T = trunc(X),
   if
     X - T == 0 -> T;
     true -> T - 1
-  end;
-floor(X) -> trunc(X).
+  end.
 
+% @doc Returns the smallest integer greater than or equal to a given number.
+-spec ceiling(number()) -> integer().
 ceiling(X) when X < 0 -> trunc(X);
 ceiling(X) ->
   T = trunc(X),

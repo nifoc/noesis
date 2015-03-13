@@ -15,3 +15,17 @@
 fmod_test() ->
   ?assertEqual(2.0, noesis_math:fmod(7, 5)),
   ?assertEqual(0.09999999999999998, noesis_math:fmod(0.9, 0.2)).
+
+floor_test() ->
+  ?assertEqual(4, noesis_math:floor(4.2)),
+  ?assertEqual(4, noesis_math:floor(4.6)),
+  ?assertEqual(-5, noesis_math:floor(-4.2)),
+  ?assertEqual(-5, noesis_math:floor(-4.6)),
+  ?assertEqual(100, noesis_math:floor(100.499999)).
+
+ceiling_test() ->
+  ?assertEqual(5, noesis_math:ceiling(4.2)),
+  ?assertEqual(5, noesis_math:ceiling(4.6)),
+  ?assertEqual(-4, noesis_math:ceiling(-4.2)),
+  ?assertEqual(-4, noesis_math:ceiling(-4.6)),
+  ?assertEqual(101, noesis_math:ceiling(100.499999)).
