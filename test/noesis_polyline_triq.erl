@@ -12,6 +12,8 @@
 
 -include_lib("triq/include/triq.hrl").
 
+-import(triq, [numtests/2]).
+
 % Generators
 
 latitude_float() -> ?LET({A, B}, {int(), pos_integer()}, noesis_geometry:normalize_lat(A / B * 100)).
@@ -27,8 +29,8 @@ encoded_path() -> ?LET(P, path(), noesis_polyline:encode(P)).
 % Properties
 
 prop_encode_1() ->
-  ?FORALL(Path, path(),
-    is_binary(noesis_polyline:encode(Path))).
+  numtests(200, ?FORALL(Path, path(),
+    is_binary(noesis_polyline:encode(Path)))).
 
 prop_encode_2() ->
   ?FORALL(Path, path(),
@@ -38,8 +40,8 @@ prop_encode_2() ->
     end).
 
 prop_decode_1() ->
-  ?FORALL(Binary, encoded_path(),
-    is_list(noesis_polyline:decode(Binary))).
+  numtests(200, ?FORALL(Binary, encoded_path(),
+    is_list(noesis_polyline:decode(Binary)))).
 
 prop_decode_2() ->
   ?FORALL(Binary, encoded_path(),

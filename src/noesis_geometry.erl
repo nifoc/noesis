@@ -110,7 +110,7 @@ center({{NELng, NELat}, {SWLng, SWLat}}=Bounds) ->
 
 % @doc Checks whether or not a given point is inside the supplied {@link bounds()} tuple.
 -spec contains_point(bounds(), coordinates()) -> boolean().
-contains_point({{_NELng, NELat}, {_SWLng, SWLat}}, {_Lng, Lat}) when SWLat > Lat; Lat > NELat ->
+contains_point({{_NELng, NELat}, {_SWLng, SWLat}}, {_Lng, Lat}) when SWLat > Lat orelse Lat > NELat ->
   false;
 contains_point(Bounds, Point) ->
   contains_lng(Bounds, Point).
@@ -155,8 +155,7 @@ rhumb_distance({StartLng, StartLat}, {DestLng, DestLat}) ->
   DLat = deg2rad(DestLat - StartLat),
   RadStartLat = deg2rad(StartLat),
   RadDestLat = deg2rad(DestLat),
-  DPsi = log(tan(RadDestLat / 2 + ?PI_FOURTH) / tan(RadStartLat / 2 + ?PI_FOURTH)),
-  Q = rhumb_calculate_q(DLat, DPsi, RadStartLat),
+  Q = rhumb_calculate_q(DLat, RadStartLat, RadDestLat),
   DLng2 = rhumb_bounds_check((abs(DLng) > ?PI), -(2 * ?PI - DLng), (2 * ?PI + DLng), DLng),
   Delta = sqrt(DLat * DLat + Q * Q * DLng2 * DLng2),
   ?R * Delta.
@@ -168,16 +167,15 @@ rhumb_distance({StartLng, StartLat}, {DestLng, DestLat}) ->
 -spec rhumb_destination_point(coordinates(), bearing(), number()) -> coordinates().
 rhumb_destination_point(Point, Bearing, Distance) ->
   D = Distance / ?R,
-  {RadLng, RadLat} = deg2rad(Point),
-  RadBrearing = deg2rad(Bearing),
-  DestLat = RadLat + D * cos(RadBrearing),
-  DLat = DestLat - RadLat,
-  DPsi = log(tan(DestLat / 2 + ?PI_FOURTH) / tan(RadLat / 2 + ?PI_FOURTH)),
-  Q = rhumb_calculate_q(DLat, DPsi, RadLat),
-  DLng = D * sin(RadBrearing) / Q,
-  DestLat2 = rhumb_bounds_check((abs(DestLat) > ?PI_HALF), (?PI - DestLat), -(?PI - DestLat), DestLat),
-  DestLng = fmod((RadLng + DLng + ?PI), (2 * ?PI)) - ?PI,
-  {rad2deg(DestLng), rad2deg(DestLat2)}.
+  {LLng, RadLat} = deg2rad(Point),
+  RadBearing = deg2rad(Bearing),
+  DPhi = D * cos(RadBearing),
+  RadLat2 = RadLat + DPhi,
+  RadLat3 = rhumb_bounds_check((abs(RadLat2) > ?PI_HALF), (?PI - RadLat2), (-?PI - RadLat2), RadLat2),
+  Q = rhumb_calculate_q(DPhi, RadLat, RadLat3),
+  DL = D * sin(RadBearing) / Q,
+  LLng2 = fmod((LLng + DL + 3 * ?PI), (2 * ?PI)) - ?PI,
+  {rad2deg(LLng2), rad2deg(RadLat3)}.
 
 % @doc Given a starting point and a destination point, this will calculate the bearing between the two.<br />
 %      `StartPoint' and `DestPoint' are both expected to be in degrees.<br /><br />
@@ -187,9 +185,13 @@ rhumb_bearing_to(StartPoint, DestPoint) ->
   {RadStartLng, RadStartLat} = deg2rad(StartPoint),
   {RadDestLng, RadDestLat} = deg2rad(DestPoint),
   DLng = RadDestLng - RadStartLng,
-  DPsi = log(tan(RadDestLat / 2 + ?PI_FOURTH) / tan(RadStartLat / 2 + ?PI_FOURTH)),
   DLng2 = rhumb_bounds_check((abs(DLng) > ?PI), -(2 * ?PI - DLng), (2 * ?PI + DLng), DLng),
-  Bearing = rad2deg(atan2(DLng2, DPsi)),
+  Bearing = if
+    abs(RadStartLat) == ?PI_HALF orelse abs(RadDestLat)  == ?PI_HALF -> 0;
+    true ->
+      DPsi = log(tan(RadDestLat / 2 + ?PI_FOURTH) / tan(RadStartLat / 2 + ?PI_FOURTH)),
+      rad2deg(atan2(DLng2, DPsi))
+  end,
   normalize_bearing(Bearing).
 
 % @doc Converts degrees to radians.
@@ -241,10 +243,14 @@ rhumb_bounds_check(true, _GtZero, LteZero, _Default) -> LteZero;
 rhumb_bounds_check(false, _GtZero, _LteZero, Default) -> Default.
 
 -spec rhumb_calculate_q(number(), number(), number()) -> number().
-rhumb_calculate_q(DLat, DPsi, RadLat) ->
+rhumb_calculate_q(_DLat, RadStartLat, RadDestLat) when abs(RadStartLat) == ?PI_HALF orelse
+                                                       abs(RadDestLat)  == ?PI_HALF ->
+  cos(RadStartLat);
+rhumb_calculate_q(DLat, RadStartLat, RadDestLat) ->
+  DPsi = log(tan(RadDestLat / 2 + ?PI_FOURTH) / tan(RadStartLat / 2 + ?PI_FOURTH)),
   try (DLat / DPsi)
   catch
-    error:_ -> cos(RadLat)
+    error:_ -> cos(RadStartLat)
   end.
 
 % Tests (private functions)
@@ -258,8 +264,4 @@ rhumb_bounds_check_test() ->
   ?assertEqual(9001, rhumb_bounds_check(true, 9001, 0, 1)),
   ?assertEqual(9001, rhumb_bounds_check(true, 0, 9001, 0)),
   ?assertEqual(9001, rhumb_bounds_check(false, 0, 0, 9001)).
-
-rhumb_calculate_q_test() ->
-  ?assertEqual(2.0, rhumb_calculate_q(10, 5, 9001)),
-  ?assertEqual(1.0, rhumb_calculate_q(9001, 0, 0)).
 -endif.

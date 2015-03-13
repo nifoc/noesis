@@ -6,6 +6,7 @@
   noesis_datetime_triq,
   noesis_directories_test,
   noesis_geometry_test,
+  noesis_geometry_triq,
   noesis_lists_test,
   noesis_lists_triq,
   noesis_math_test,

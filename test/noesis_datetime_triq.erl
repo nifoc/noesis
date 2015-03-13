@@ -45,12 +45,12 @@ day_binary_word() -> oneof([<<"Mon">>, <<"Tue">>, <<"Wed">>, <<"Thu">>, <<"Fri">
 
 datetime() -> {{year_int(), month_int(), day_int()}, {hour_int(), minute_int(), second_int()}}.
 
-rfc1123_binary() -> ?LET({WD, D, Mo, Y, H, Mi, S},
+rfc1123() -> ?LET({WD, D, Mo, Y, H, Mi, S},
                          {day_binary_word(), day_binary_digit(), month_binary_word(), year_binary_digit(),
                           hour_binary_digit(), minute_binary_digit(), second_binary_digit()},
                          <<WD/binary, ", ", D/binary, " ", Mo/binary, " ", Y/binary, " ", H/binary, ":", Mi/binary, ":", S/binary, " GMT">>).
 
-iso8601_binary() -> ?LET({Y, Mo, D, H, Mi, S},
+iso8601() -> ?LET({Y, Mo, D, H, Mi, S},
                          {year_binary_digit(), month_binary_digit(), day_binary_digit(), hour_binary_digit(), minute_binary_digit(), second_binary_digit()},
                          <<Y/binary, "-", Mo/binary, "-", D/binary, "T", H/binary, ":", Mi/binary, ":", S/binary, "Z">>).
 
@@ -68,11 +68,11 @@ prop_rfc1123_2() ->
     end).
 
 prop_rfc1123_to_datetime_1() ->
-  ?FORALL(Bin, rfc1123_binary(),
+  ?FORALL(Bin, rfc1123(),
     is_tuple(noesis_datetime:rfc1123_to_datetime(Bin))).
 
 prop_rfc1123_to_datetime_2() ->
-  ?FORALL(Bin, rfc1123_binary(),
+  ?FORALL(Bin, rfc1123(),
     calendar:valid_date(element(1, noesis_datetime:rfc1123_to_datetime(Bin)))).
 
 prop_iso8601_1() ->
@@ -87,9 +87,9 @@ prop_iso8601_2() ->
     end).
 
 prop_iso8601_to_datetime_1() ->
-  ?FORALL(Bin, iso8601_binary(),
+  ?FORALL(Bin, iso8601(),
     is_tuple(noesis_datetime:iso8601_to_datetime(Bin))).
 
 prop_iso8601_to_datetime_2() ->
-  ?FORALL(Bin, iso8601_binary(),
+  ?FORALL(Bin, iso8601(),
     calendar:valid_date(element(1, noesis_datetime:iso8601_to_datetime(Bin)))).

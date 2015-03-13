@@ -17,7 +17,9 @@
 
 % API
 -export([
-  fmod/2
+  fmod/2,
+  floor/1,
+  ceiling/1
 ]).
 
 % API
@@ -27,3 +29,19 @@
 fmod(X, Y) ->
   Div = float(trunc(X / Y)),
   X - Div * Y.
+
+floor(X) when X < 0 ->
+  T = trunc(X),
+  if
+    X - T == 0 -> T;
+    true -> T - 1
+  end;
+floor(X) -> trunc(X).
+
+ceiling(X) when X < 0 -> trunc(X);
+ceiling(X) ->
+  T = trunc(X),
+  if
+    X - T == 0 -> T;
+    true -> T + 1
+  end.

@@ -14,10 +14,6 @@
 
 -include_lib("triq/include/triq.hrl").
 
-% Generators
-
-non_neg_int() -> ?SUCHTHAT(I, int(), I >= 0).
-
 % Properties
 
 prop_pfilter_1() ->
@@ -43,15 +39,15 @@ prop_pmap_1() ->
     end).
 
 prop_split_1() ->
-  ?FORALL({N, List}, {non_neg_int(), list(int())},
+  ?FORALL({N, List}, {non_neg_integer(), list(int())},
     length(element(1, noesis_lists:split(N, List))) =< N).
 
 prop_split_2() ->
-  numtests(200, ?FORALL({N, List}, {non_neg_int(), list(int())},
+  numtests(200, ?FORALL({N, List}, {non_neg_integer(), list(int())},
     ?IMPLIES(length(List) >= N,
       length(element(1, noesis_lists:split(N, List))) =:= N))).
 
 prop_split_3() ->
-  numtests(200, ?FORALL({N, List}, {non_neg_int(), list(int())},
+  numtests(200, ?FORALL({N, List}, {non_neg_integer(), list(int())},
     ?IMPLIES(length(List) < N,
       length(element(2, noesis_lists:split(N, List))) =:= 0))).

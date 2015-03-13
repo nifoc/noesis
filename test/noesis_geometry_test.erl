@@ -56,11 +56,11 @@ rhumb_distance_test() ->
   ?assertEqual(15000, round(noesis_geometry:rhumb_distance({1.33806, 51.12556}, {1.3380600000000318, -83.73457882378777}))).
 
 rhumb_destination_point_test() ->
-  ?assertEqual({4.399965478328651,50.178752812432656}, noesis_geometry:rhumb_destination_point({1.33806, 51.12556}, 116, 240.23)),
-  ?assertEqual({1.3380600000000065, 48.96572992335743}, noesis_geometry:rhumb_destination_point({1.33806, 51.12556}, 180, 240.23)),
-  ?assertEqual({1.3380600000000065, 51.12556}, noesis_geometry:rhumb_destination_point({1.3380600000000065, 48.96572992335743}, 360, 240.23)),
-  ?assertEqual({1.3380600000000065, 51.12556}, noesis_geometry:rhumb_destination_point({1.3380600000000065, 48.96572992335743}, 0, 240.23)),
-  ?assertEqual({1.3380600000000318, -83.73457882378777}, noesis_geometry:rhumb_destination_point({1.33806, 51.12556}, 180, 15000)).
+  ?assertEqual({4.399965478328626, 50.178752812432656}, noesis_geometry:rhumb_destination_point({1.33806, 51.12556}, 116, 240.23)),
+  ?assertEqual({1.338059999999981, 48.96572992335743}, noesis_geometry:rhumb_destination_point({1.33806, 51.12556}, 180, 240.23)),
+  ?assertEqual({1.338059999999981, 51.12556}, noesis_geometry:rhumb_destination_point({1.3380600000000065, 48.96572992335743}, 360, 240.23)),
+  ?assertEqual({1.338059999999981, 51.12556}, noesis_geometry:rhumb_destination_point({1.3380600000000065, 48.96572992335743}, 0, 240.23)),
+  ?assertEqual({1.338059999999981, -83.73457882378777}, noesis_geometry:rhumb_destination_point({1.33806, 51.12556}, 180, 15000)).
 
 rhumb_bearing_to_test() ->
   ?assertEqual(0.0, noesis_geometry:rhumb_bearing_to({1.3380600000000065, 48.96572992335743}, {1.3380600000000065, 51.12556})),
