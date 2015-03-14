@@ -58,3 +58,15 @@ prop_rhumb_destination_point_1() ->
 prop_rhumb_bearing_to_1() ->
   numtests(200, ?FORALL({StartPoint, DestPoint}, {point(), point()},
     is_float(noesis_geometry:rhumb_bearing_to(StartPoint, DestPoint)))).
+
+prop_normalize_lat_1() ->
+  ?FORALL(Lat, latitude_float(),
+    (Lat >= -90) and (Lat =< 90)).
+
+prop_normalize_lng_1() ->
+  ?FORALL(Lng, longitude_float(),
+    (Lng >= -180) and (Lng =< 180)).
+
+prop_normalize_bearing_1() ->
+  ?FORALL(Bearing, bearing(),
+    (Bearing >= 0) and (Bearing =< 360)).
