@@ -4,7 +4,7 @@
 
 * Added `noesis_geometry` module with some (more or less) geometry related functions
 * Added `noesis_math` module
-* Added `noesis_polyline` module
+* Added `noesis_polyline` module, which implements encoding and decoding polylines
 
 ## 0.2.1
 
