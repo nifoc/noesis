@@ -39,7 +39,7 @@ group_by(Fun, List) ->
 
 % @doc Delegates to {@link pfilter/3} and uses default options.<br /><br />
 %      <strong>Default Options</strong><br />
-%      <pre><code>[{retain_order, true}, {parallelism, round(erlang:system_info(schedulers) * 1.5)}]</code></pre>
+%      <pre><code>[{retain_order, true}, {parallelism, default_parallelism()}]</code></pre>
 -spec pfilter(fun((T) -> boolean()), [T]) -> [T].
 pfilter(Fun, List) ->
   pfilter(Fun, List, []).
@@ -50,7 +50,7 @@ pfilter(Fun, List) ->
 pfilter(_Fun, [], _Options) ->
   [];
 pfilter(Fun, List, Options) ->
-  case noesis_proplists:get_value(parallelism, Options, round(erlang:system_info(schedulers) * 1.5)) of
+  case noesis_proplists:get_value(parallelism, Options, default_parallelism()) of
     1 -> lists:filter(Fun, List);
     Parallelism ->
       List2 = parallel_init(Fun, Parallelism, List),
@@ -59,7 +59,7 @@ pfilter(Fun, List, Options) ->
 
 % @doc Delegates to {@link pmap/3} and uses default options.<br /><br />
 %      <strong>Default Options</strong><br />
-%      <pre><code>[{retain_order, true}, {parallelism, round(erlang:system_info(schedulers) * 1.5)}]</code></pre>
+%      <pre><code>[{retain_order, true}, {parallelism, default_parallelism()}]</code></pre>
 -spec pmap(fun((A) -> B), [A]) -> [B].
 pmap(Fun, List) ->
   pmap(Fun, List, []).
@@ -72,7 +72,7 @@ pmap(Fun, List) ->
 pmap(_Fun, [], _Options) ->
   [];
 pmap(Fun, List, Options) ->
-  case noesis_proplists:get_value(parallelism, Options, round(erlang:system_info(schedulers) * 1.5)) of
+  case noesis_proplists:get_value(parallelism, Options, default_parallelism()) of
     1 -> lists:map(Fun, List);
     Parallelism ->
       List2 = parallel_init(Fun, Parallelism, List),
@@ -94,6 +94,9 @@ split(_N, List) ->
   {List, []}.
 
 % Private
+
+-spec default_parallelism() -> pos_integer().
+default_parallelism() -> round(erlang:system_info(schedulers) * 1.5).
 
 -spec parallel_init(fun(), pos_integer(), list()) -> [{pos_integer(), term(), term()}].
 parallel_init(Fun, Parallelism, List) ->
