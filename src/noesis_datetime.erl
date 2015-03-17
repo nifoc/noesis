@@ -195,11 +195,11 @@ iso8601_to_timestamp(ISO) ->
 % Private
 
 -spec range_to_seconds(range()) -> non_neg_integer().
-range_to_seconds({X, R}) when R =:= seconds orelse R =:= second -> X;
-range_to_seconds({X, R}) when R =:= minutes orelse R =:= minute -> 60 * X;
-range_to_seconds({X, R}) when R =:= hours orelse R =:= hour -> 60 * 60 * X;
-range_to_seconds({X, R}) when R =:= days orelse R =:= day -> 60 * 60 * 24 * X;
-range_to_seconds({X, R}) when R =:= weeks orelse R =:= week -> 60 * 60 * 24 * 7 * X.
+range_to_seconds({X, R}) when R == seconds orelse R == second -> X;
+range_to_seconds({X, R}) when R == minutes orelse R == minute -> 60 * X;
+range_to_seconds({X, R}) when R == hours orelse R == hour -> 60 * 60 * X;
+range_to_seconds({X, R}) when R == days orelse R == day -> 60 * 60 * 24 * X;
+range_to_seconds({X, R}) when R == weeks orelse R == week -> 60 * 60 * 24 * 7 * X.
 
 -spec compare_timestamps(comparison_op(), non_neg_integer(), non_neg_integer()) -> boolean().
 compare_timestamps(lt, Diff, Seconds) -> Diff < Seconds;

@@ -156,7 +156,7 @@ rhumb_distance({StartLng, StartLat}, {DestLng, DestLat}) ->
   RadStartLat = deg2rad(StartLat),
   RadDestLat = deg2rad(DestLat),
   Q = rhumb_calculate_q(DLat, RadStartLat, RadDestLat),
-  DLng2 = rhumb_bounds_check((abs(DLng) > ?PI), -(2 * ?PI - DLng), (2 * ?PI + DLng), DLng),
+  DLng2 = rhumb_bounds_check(abs(DLng) > ?PI, -(2 * ?PI - DLng), 2 * ?PI + DLng, DLng),
   Delta = sqrt(DLat * DLat + Q * Q * DLng2 * DLng2),
   ?R * Delta.
 
@@ -171,10 +171,10 @@ rhumb_destination_point(Point, Bearing, Distance) ->
   RadBearing = deg2rad(Bearing),
   DPhi = D * cos(RadBearing),
   RadLat2 = RadLat + DPhi,
-  RadLat3 = rhumb_bounds_check((abs(RadLat2) > ?PI_HALF), (?PI - RadLat2), (-?PI - RadLat2), RadLat2),
+  RadLat3 = rhumb_bounds_check(abs(RadLat2) > ?PI_HALF, ?PI - RadLat2, -?PI - RadLat2, RadLat2),
   Q = rhumb_calculate_q(DPhi, RadLat, RadLat3),
   DL = D * sin(RadBearing) / Q,
-  LLng2 = fmod((LLng + DL + 3 * ?PI), (2 * ?PI)) - ?PI,
+  LLng2 = fmod(LLng + DL + 3 * ?PI, 2 * ?PI) - ?PI,
   {rad2deg(LLng2), rad2deg(RadLat3)}.
 
 % @doc Given a starting point and a destination point, this will calculate the bearing between the two.<br />
@@ -185,9 +185,9 @@ rhumb_bearing_to(StartPoint, DestPoint) ->
   {RadStartLng, RadStartLat} = deg2rad(StartPoint),
   {RadDestLng, RadDestLat} = deg2rad(DestPoint),
   DLng = RadDestLng - RadStartLng,
-  DLng2 = rhumb_bounds_check((abs(DLng) > ?PI), -(2 * ?PI - DLng), (2 * ?PI + DLng), DLng),
+  DLng2 = rhumb_bounds_check(abs(DLng) > ?PI, -(2 * ?PI - DLng), 2 * ?PI + DLng, DLng),
   Bearing = if
-    abs(RadStartLat) == ?PI_HALF orelse abs(RadDestLat)  == ?PI_HALF -> 0;
+    abs(RadStartLat) == ?PI_HALF orelse abs(RadDestLat) == ?PI_HALF -> 0;
     true ->
       DPsi = log(tan(RadDestLat / 2 + ?PI_FOURTH) / tan(RadStartLat / 2 + ?PI_FOURTH)),
       rad2deg(atan2(DLng2, DPsi))

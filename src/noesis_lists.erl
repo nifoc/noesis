@@ -150,4 +150,4 @@ pfilter_extract_results(List, Options) ->
     true -> lists:keysort(1, List);
     false -> List
   end,
-  [Item || {_Key, Item, Value} <- List2, Value =:= true].
+  [Item || {_Key, Item, Value} <- List2, Value == true].

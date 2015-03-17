@@ -142,4 +142,4 @@ keypos_acc(_Key, [], _Acc) ->
 keypos_acc(Key, [{Key, _Value}|_Rest], Acc) ->
   Acc;
 keypos_acc(Key, [_Pair|Rest], Acc) ->
-  keypos_acc(Key, Rest, Acc+1).
+  keypos_acc(Key, Rest, Acc + 1).
