@@ -79,18 +79,15 @@ delete_keys([Key|Rest]=Keys, List) ->
 
 % @doc Returns the position of a key in a property list. If `Key' does not exist `undefined' will be returned.
 -spec keypos(term(), proplist()) -> pos_integer() | undefined.
-keypos(Key, List) ->
-  keypos_acc(Key, List, 1).
+keypos(Key, List) -> keypos_acc(Key, List, 1).
 
 % @doc Delegates to {@link extract/4}. `NullValue' is set to `undefined' and `Defaults' is set to an empty list.
 -spec extract([term()], proplist()) -> proplist().
-extract(Keys, List) ->
-  extract(Keys, List, undefined, []).
+extract(Keys, List) -> extract(Keys, List, undefined, []).
 
 % @doc Delegates to {@link extract/4}. Allows you to set `NullValue' and sets `Defaults' to an empty list.
 -spec extract([term()], proplist(), term()) -> proplist().
-extract(Keys, List, NullValue) ->
-  extract(Keys, List, NullValue, []).
+extract(Keys, List, NullValue) -> extract(Keys, List, NullValue, []).
 
 % @doc Extracts key/value pairs from a property list and returns a new property list containing only extracted pairs.<br />
 %      You can provide a set of default values that will be used as fallback if the key is not found in `List'. If the key is not
@@ -109,8 +106,7 @@ extract(Keys, List, NullValue, Defaults) ->
 
 % @doc Delegates to {@link partial_extract/3}. `NullValue' is set to `undefined'.
 -spec partial_extract([term()], proplist()) -> proplist().
-partial_extract(Keys, List) ->
-  partial_extract(Keys, List, undefined).
+partial_extract(Keys, List) -> partial_extract(Keys, List, undefined).
 
 % @doc Extracts key/value pairs from a property list and returns a new property list containing only extracted pairs.<br />
 %      Pairs not found in `List' (and all those matching `NullValue') will not be included in the property list that is returned.
@@ -137,9 +133,6 @@ merge(Fun, ListA, ListB) ->
 % Private
 
 -spec keypos_acc(term(), proplist(), pos_integer()) -> pos_integer() | undefined.
-keypos_acc(_Key, [], _Acc) ->
-  undefined;
-keypos_acc(Key, [{Key, _Value}|_Rest], Acc) ->
-  Acc;
-keypos_acc(Key, [_Pair|Rest], Acc) ->
-  keypos_acc(Key, Rest, Acc + 1).
+keypos_acc(_Key, [], _Acc) -> undefined;
+keypos_acc(Key, [{Key, _Value}|_Rest], Acc) -> Acc;
+keypos_acc(Key, [_Pair|Rest], Acc) -> keypos_acc(Key, Rest, Acc + 1).
