@@ -29,8 +29,7 @@
 
 % @doc Groups a list using a user-supplied function.
 -spec group_by(fun((A) -> B), [A]) -> noesis_proplists:proplist(B, list(A)).
-group_by(_Fun, []) ->
-  [];
+group_by(_Fun, []) -> [];
 group_by(Fun, List) ->
   Dict = lists:foldl(fun({Key, Value}, Acc) ->
     dict:append(Key, Value, Acc)
@@ -41,14 +40,12 @@ group_by(Fun, List) ->
 %      <strong>Default Options</strong><br />
 %      <pre><code>[{retain_order, true}, {parallelism, default_parallelism()}]</code></pre>
 -spec pfilter(fun((T) -> boolean()), [T]) -> [T].
-pfilter(Fun, List) ->
-  pfilter(Fun, List, []).
+pfilter(Fun, List) -> pfilter(Fun, List, []).
 
 % @doc Returns a list of all elements in `List' for which `Fun' returns `true'. Applying `Fun' to every element in the list
 %      happens in parallel.
 -spec pfilter(fun((T) -> boolean()), [T], noesis_proplists:proplist(atom(), term())) -> [T].
-pfilter(_Fun, [], _Options) ->
-  [];
+pfilter(_Fun, [], _Options) -> [];
 pfilter(Fun, List, Options) ->
   case noesis_proplists:get_value(parallelism, Options, default_parallelism()) of
     1 -> lists:filter(Fun, List);
@@ -61,16 +58,14 @@ pfilter(Fun, List, Options) ->
 %      <strong>Default Options</strong><br />
 %      <pre><code>[{retain_order, true}, {parallelism, default_parallelism()}]</code></pre>
 -spec pmap(fun((A) -> B), [A]) -> [B].
-pmap(Fun, List) ->
-  pmap(Fun, List, []).
+pmap(Fun, List) -> pmap(Fun, List, []).
 
 % @doc Takes a function from `A's to `B's and a list of `A's and produces a list of `B's by applying the function
 %      to every element in the list in parallel. The function is used to obtain the return values.<br /><br />
 %      Partially based on <a href="http://erlang.org/pipermail/erlang-questions/2006-June/020834.html" target="_blank">Erlang on the Niagara</a>
 %      by Joe Armstrong.
 -spec pmap(fun((A) -> B), [A], noesis_proplists:proplist(atom(), term())) -> [B].
-pmap(_Fun, [], _Options) ->
-  [];
+pmap(_Fun, [], _Options) -> [];
 pmap(Fun, List, Options) ->
   case noesis_proplists:get_value(parallelism, Options, default_parallelism()) of
     1 -> lists:map(Fun, List);
@@ -86,12 +81,9 @@ pmap(Fun, List, Options) ->
 %      `split(2, [demo])' => `{[demo], []}'<br />
 %      `split(2, [a, b, c, d, e])' => `{[a, b], [c, d, e]}'
 -spec split(non_neg_integer(), list()) -> {ListA :: list(), ListB :: list()}.
-split(_N, []) ->
-  {[], []};
-split(N, List) when N =< length(List) ->
-  lists:split(N, List);
-split(_N, List) ->
-  {List, []}.
+split(_N, []) -> {[], []};
+split(N, List) when N =< length(List) -> lists:split(N, List);
+split(_N, List) -> {List, []}.
 
 % Private
 

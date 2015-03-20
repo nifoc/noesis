@@ -114,8 +114,7 @@ timestamp_to_iso8601(Timestamp) ->
 %      `{X, days}'<br />
 %      `{X, weeks}'
 -spec timestamp_distance(comparison_op(), timestamp(), timestamp(), range()) -> boolean().
-timestamp_distance(Op, A, B, Range) when A > B ->
-  timestamp_distance(Op, B, A, Range);
+timestamp_distance(Op, A, B, Range) when A > B -> timestamp_distance(Op, B, A, Range);
 timestamp_distance(Op, A, B, Range) ->
   Seconds = range_to_seconds(Range),
   Diff = B - A,
