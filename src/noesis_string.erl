@@ -47,10 +47,14 @@ hamming(First, Second) when length(First) =:= length(Second) ->
 % Private
 
 -spec levenshtein_rec(string(), string(), noesis_dict:dictionary(tuple(), non_neg_integer())) -> {non_neg_integer(), noesis_dict:dictionary(tuple(), non_neg_integer())}.
-levenshtein_rec(Str, Str, Dict) -> {0, Dict};
-levenshtein_rec([_FH], [_SH], Dict) -> {1, Dict};
-levenshtein_rec([], Second, Dict) -> {length(Second), Dict};
-levenshtein_rec(First, [], Dict) -> {length(First), Dict};
+levenshtein_rec(Str, Str, Dict) ->
+  {0, Dict};
+levenshtein_rec([_FH], [_SH], Dict) ->
+  {1, Dict};
+levenshtein_rec([], Second, Dict) ->
+  {length(Second), Dict};
+levenshtein_rec(First, [], Dict) ->
+  {length(First), Dict};
 levenshtein_rec([FH|FT]=First, [SH|ST]=Second, Dict) ->
   case dict:is_key({First, Second}, Dict) of
     true ->
@@ -67,6 +71,9 @@ levenshtein_rec([FH|FT]=First, [SH|ST]=Second, Dict) ->
   end.
 
 -spec hamming_acc(string(), string(), non_neg_integer()) -> non_neg_integer().
-hamming_acc([], [], Acc) -> Acc;
-hamming_acc([H|FT], [H|ST], Acc) -> hamming_acc(FT, ST, Acc);
-hamming_acc([_FH|FT], [_SH|ST], Acc) -> hamming_acc(FT, ST, Acc + 1).
+hamming_acc([], [], Acc) ->
+  Acc;
+hamming_acc([H|FT], [H|ST], Acc) ->
+  hamming_acc(FT, ST, Acc);
+hamming_acc([_FH|FT], [_SH|ST], Acc) ->
+  hamming_acc(FT, ST, Acc + 1).

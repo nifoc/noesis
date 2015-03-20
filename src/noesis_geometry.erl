@@ -131,7 +131,8 @@ extend({{NELng, NELat}, {SWLng, SWLat}}=Bounds, {Lng, Lat}=Point) ->
 
 % @doc Returns whether or not the bounds intersect the antimeridian.
 -spec crosses_antimeridian(Bounds :: bounds()) -> boolean().
-crosses_antimeridian({{NELng, _NELat}, {SWLng, _SWLat}}) -> SWLng > NELng.
+crosses_antimeridian({{NELng, _NELat}, {SWLng, _SWLat}}) ->
+  SWLng > NELng.
 
 % @doc Calculates the great-circle distance between two coordinates, that is the shortest distance between
 %      two points on the surface of a sphere.<br />
@@ -196,17 +197,22 @@ rhumb_bearing_to(StartPoint, DestPoint) ->
 
 % @doc Converts degrees to radians.
 -spec deg2rad(number() | coordinates()) -> number() | coordinates().
-deg2rad({Lng, Lat}) -> {deg2rad(Lng), deg2rad(Lat)};
-deg2rad(Deg) -> ?PI * Deg / 180.
+deg2rad({Lng, Lat}) ->
+  {deg2rad(Lng), deg2rad(Lat)};
+deg2rad(Deg) ->
+  ?PI * Deg / 180.
 
 % @doc Converts radians to degrees.
 -spec rad2deg(number() | coordinates()) -> number() | coordinates().
-rad2deg({Lng, Lat}) -> {rad2deg(Lng), rad2deg(Lat)};
-rad2deg(Rad) -> 180 * Rad / ?PI.
+rad2deg({Lng, Lat}) ->
+  {rad2deg(Lng), rad2deg(Lat)};
+rad2deg(Rad) ->
+  180 * Rad / ?PI.
 
 % @doc Normalizes a latitude to the `[-90, 90]' range. Latitudes above 90 or below -90 are capped, not wrapped.
 -spec normalize_lat(latitude()) -> latitude().
-normalize_lat(Lat) -> float(max(-90, min(90, Lat))).
+normalize_lat(Lat) ->
+  float(max(-90, min(90, Lat))).
 
 % @doc Normalizes a longitude to the `[-180, 180]' range. Longitudes above 180 or below -180 are wrapped.
 -spec normalize_lng(longitude()) -> longitude().
@@ -216,13 +222,16 @@ normalize_lng(Lng) ->
 
 % @doc Normalizes a bearing to the `[0, 360]' range. Bearings above 360 or below 0 are wrapped.
 -spec normalize_bearing(bearing()) -> bearing().
-normalize_bearing(Bearing) -> fmod((fmod(Bearing, 360) + 360), 360).
+normalize_bearing(Bearing) ->
+  fmod((fmod(Bearing, 360) + 360), 360).
 
 % Private
 
 -spec lng_span(longitude(), longitude()) -> number().
-lng_span(West, East) when West > East -> East + 360 - West;
-lng_span(West, East) -> East - West.
+lng_span(West, East) when West > East ->
+  East + 360 - West;
+lng_span(West, East) ->
+  East - West.
 
 -spec contains_lng(bounds(), coordinates()) -> boolean().
 contains_lng({{NELng, _NELat}, {SWLng, _SWLat}}=Bounds, {Lng, _Lat}) ->
@@ -232,15 +241,22 @@ contains_lng({{NELng, _NELat}, {SWLng, _SWLat}}=Bounds, {Lng, _Lat}) ->
   end.
 
 -spec normalize_lng_bounds(longitude()) -> float().
-normalize_lng_bounds(Lng) when Lng == 180 -> 180.0;
-normalize_lng_bounds(Lng) when Lng < -180 -> Lng + 360.0;
-normalize_lng_bounds(Lng) when Lng > 180 -> Lng - 360.0;
-normalize_lng_bounds(Lng) -> float(Lng).
+normalize_lng_bounds(Lng) when Lng == 180 ->
+  180.0;
+normalize_lng_bounds(Lng) when Lng < -180 ->
+  Lng + 360.0;
+normalize_lng_bounds(Lng) when Lng > 180 ->
+  Lng - 360.0;
+normalize_lng_bounds(Lng) ->
+  float(Lng).
 
 -spec rhumb_bounds_check(boolean(), number(), number(), number()) -> number().
-rhumb_bounds_check(true, GtZero, _LteZero, Default) when Default > 0 -> GtZero;
-rhumb_bounds_check(true, _GtZero, LteZero, _Default) -> LteZero;
-rhumb_bounds_check(false, _GtZero, _LteZero, Default) -> Default.
+rhumb_bounds_check(true, GtZero, _LteZero, Default) when Default > 0 ->
+  GtZero;
+rhumb_bounds_check(true, _GtZero, LteZero, _Default) ->
+  LteZero;
+rhumb_bounds_check(false, _GtZero, _LteZero, Default) ->
+  Default.
 
 -spec rhumb_calculate_q(number(), number(), number()) -> number().
 rhumb_calculate_q(_DLat, RadStartLat, RadDestLat) when abs(RadStartLat) == ?PI_HALF orelse

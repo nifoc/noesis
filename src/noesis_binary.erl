@@ -25,8 +25,10 @@
 
 % @doc Joins a list of binaries together using `Sep'.
 -spec join(Parts :: [binary()], binary()) -> binary().
-join([], _Sep) -> <<>>;
-join([Part], _Sep) -> Part;
+join([], _Sep) ->
+  <<>>;
+join([Part], _Sep) ->
+  Part;
 join([Head|Tail], Sep) ->
   lists:foldl(fun(Value, Acc) -> <<Acc/binary, Sep/binary, Value/binary>> end, Head, Tail).
 

@@ -114,7 +114,8 @@ timestamp_to_iso8601(Timestamp) ->
 %      `{X, days}'<br />
 %      `{X, weeks}'
 -spec timestamp_distance(comparison_op(), timestamp(), timestamp(), range()) -> boolean().
-timestamp_distance(Op, A, B, Range) when A > B -> timestamp_distance(Op, B, A, Range);
+timestamp_distance(Op, A, B, Range) when A > B ->
+  timestamp_distance(Op, B, A, Range);
 timestamp_distance(Op, A, B, Range) ->
   Seconds = range_to_seconds(Range),
   Diff = B - A,
@@ -194,18 +195,28 @@ iso8601_to_timestamp(ISO) ->
 % Private
 
 -spec range_to_seconds(range()) -> non_neg_integer().
-range_to_seconds({X, R}) when R == seconds orelse R == second -> X;
-range_to_seconds({X, R}) when R == minutes orelse R == minute -> 60 * X;
-range_to_seconds({X, R}) when R == hours orelse R == hour -> 60 * 60 * X;
-range_to_seconds({X, R}) when R == days orelse R == day -> 60 * 60 * 24 * X;
-range_to_seconds({X, R}) when R == weeks orelse R == week -> 60 * 60 * 24 * 7 * X.
+range_to_seconds({X, R}) when R == seconds orelse R == second ->
+  X;
+range_to_seconds({X, R}) when R == minutes orelse R == minute ->
+  60 * X;
+range_to_seconds({X, R}) when R == hours orelse R == hour ->
+  60 * 60 * X;
+range_to_seconds({X, R}) when R == days orelse R == day ->
+  60 * 60 * 24 * X;
+range_to_seconds({X, R}) when R == weeks orelse R == week ->
+  60 * 60 * 24 * 7 * X.
 
 -spec compare_timestamps(comparison_op(), non_neg_integer(), non_neg_integer()) -> boolean().
-compare_timestamps(lt, Diff, Seconds) -> Diff < Seconds;
-compare_timestamps(lte, Diff, Seconds) -> Diff =< Seconds;
-compare_timestamps(eq, Diff, Seconds) -> Diff =:= Seconds;
-compare_timestamps(gt, Diff, Seconds) -> Diff > Seconds;
-compare_timestamps(gte, Diff, Seconds) -> Diff >= Seconds.
+compare_timestamps(lt, Diff, Seconds) ->
+  Diff < Seconds;
+compare_timestamps(lte, Diff, Seconds) ->
+  Diff =< Seconds;
+compare_timestamps(eq, Diff, Seconds) ->
+  Diff =:= Seconds;
+compare_timestamps(gt, Diff, Seconds) ->
+  Diff > Seconds;
+compare_timestamps(gte, Diff, Seconds) ->
+  Diff >= Seconds.
 
 -spec rfc1123_dayname(1..7) -> string().
 rfc1123_dayname(1) -> "Mon";

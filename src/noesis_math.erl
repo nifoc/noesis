@@ -32,7 +32,8 @@ fmod(X, Y) ->
 
 % @doc Returns the largest integer less than or equal to a given number.
 -spec floor(number()) -> integer().
-floor(X) when X >= 0 -> trunc(X);
+floor(X) when X >= 0 ->
+  trunc(X);
 floor(X) ->
   T = trunc(X),
   if
@@ -42,7 +43,8 @@ floor(X) ->
 
 % @doc Returns the smallest integer greater than or equal to a given number.
 -spec ceiling(number()) -> integer().
-ceiling(X) when X < 0 -> trunc(X);
+ceiling(X) when X < 0 ->
+  trunc(X);
 ceiling(X) ->
   T = trunc(X),
   if
