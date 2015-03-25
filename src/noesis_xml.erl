@@ -58,22 +58,19 @@ from_list_acc([Element|Rest], Acc) ->
 encode_element({Key, Value}, Acc) ->
   EncodedKey = encode_key(Key),
   EncodedValue = encode_value(Value),
-  EncodedElement = <<"<", EncodedKey/binary, ">", EncodedValue/binary, "</", EncodedKey/binary, ">">>,
+  EncodedElement = [$<, EncodedKey, $>, EncodedValue, "</", EncodedKey, $>],
   [EncodedElement | Acc];
 encode_element({Key, Attributes, Value}, Acc) ->
   EncodedKey = encode_key(Key),
   EncodedAttributes = encode_attributes(Attributes, []),
   EncodedValue = encode_value(Value),
-  EncodedElement = <<"<", EncodedKey/binary, EncodedAttributes/binary, ">",
-                     EncodedValue/binary, "</", EncodedKey/binary, ">">>,
+  EncodedElement = [$<, EncodedKey, EncodedAttributes, $>, EncodedValue, "</", EncodedKey, $>],
   [EncodedElement | Acc].
 
 -spec encode_key(key()) -> binary().
 encode_key(Key) when is_atom(Key) ->
   atom_to_binary(Key, utf8);
-encode_key(Key) when is_list(Key) ->
-  unicode:characters_to_binary(Key);
-encode_key(Key) when is_binary(Key) ->
+encode_key(Key) ->
   Key.
 
 -spec encode_attributes(attributes(), iolist()) -> binary().
@@ -82,18 +79,16 @@ encode_attributes([], Acc) ->
 encode_attributes([{Key, Value}|Rest], Acc) ->
   EncodedKey = encode_key(Key), % Attr. keys are just like node keys
   EncodedValue = encode_value(Value), % Attr. value are simple node values
-  EncodedAttribute = <<" ", EncodedKey/binary, "=\"", EncodedValue/binary, "\"">>,
+  EncodedAttribute = [" ", EncodedKey, $=, $", EncodedValue, $"],
   Acc2 = [EncodedAttribute | Acc],
   encode_attributes(Rest, Acc2).
 
 -spec encode_value(value()) -> binary().
 encode_value(Value) when is_list(Value) andalso is_tuple(hd(Value)) ->
   from_list_acc(Value, []);
-encode_value(Value) when is_list(Value) ->
-  unicode:characters_to_binary(Value);
-encode_value(Value) when is_binary(Value) ->
-  Value;
 encode_value(Value) when is_integer(Value) ->
   integer_to_binary(Value);
 encode_value(Value) when is_float(Value) ->
-  float_to_binary(Value).
+  float_to_binary(Value);
+encode_value(Value) ->
+  Value.
