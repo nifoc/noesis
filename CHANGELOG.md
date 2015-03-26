@@ -5,6 +5,7 @@
 * Added `noesis_geometry` module with some (more or less) geometry related functions
 * Added `noesis_math` module
 * Added `noesis_polyline` module, which implements encoding and decoding [polylines](https://developers.google.com/maps/documentation/utilities/polylinealgorithm)
+* Added `noesis_xml` module, which includes some very basic functions for working with XML
 
 ## 0.2.1
 

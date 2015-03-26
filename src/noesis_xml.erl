@@ -83,13 +83,13 @@ encode_attributes([{Key, Value}|Rest], Acc) ->
   Acc2 = [EncodedAttribute | Acc],
   encode_attributes(Rest, Acc2).
 
--spec encode_value(value()) -> binary().
+-spec encode_value(value()) -> iolist().
 encode_value(Value) when is_list(Value) andalso is_tuple(hd(Value)) ->
   from_list_acc(Value, []);
 encode_value(Value) when is_integer(Value) ->
   integer_to_binary(Value);
 encode_value(Value) when is_float(Value) ->
-  float_to_binary(Value);
+  float_to_binary(Value, [{decimals, 16}, compact]);
 encode_value(Value) ->
   Value.
 
