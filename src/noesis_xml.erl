@@ -67,15 +67,15 @@ encode_element({Key, Attributes, Value}, Acc) ->
   EncodedElement = [$<, EncodedKey, EncodedAttributes, $>, EncodedValue, "</", EncodedKey, $>],
   [EncodedElement | Acc].
 
--spec encode_key(key()) -> binary().
+-spec encode_key(key()) -> iolist().
 encode_key(Key) when is_atom(Key) ->
   atom_to_binary(Key, utf8);
 encode_key(Key) ->
   Key.
 
--spec encode_attributes(attributes(), iolist()) -> binary().
+-spec encode_attributes(attributes(), iolist()) -> iolist().
 encode_attributes([], Acc) ->
-  iolist_to_binary(lists:reverse(Acc));
+  lists:reverse(Acc);
 encode_attributes([{Key, Value}|Rest], Acc) ->
   EncodedKey = encode_key(Key), % Attr. keys are just like node keys
   EncodedValue = encode_value(Value), % Attr. value are simple node values
@@ -92,3 +92,10 @@ encode_value(Value) when is_float(Value) ->
   float_to_binary(Value);
 encode_value(Value) ->
   Value.
+
+-ifdef(PERF).
+horse_from_list() ->
+  horse:repeat(100000, begin
+    from_list([{foo, "bar"}, {xml, [{is, [{very, "enterprise"}], <<"!">>}]}, {<<"binary">>, "string"}])
+  end).
+-endif.
