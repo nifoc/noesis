@@ -89,13 +89,12 @@ encode_value(Value) when is_list(Value) andalso is_tuple(hd(Value)) ->
 encode_value(Value) when is_integer(Value) ->
   integer_to_binary(Value);
 encode_value(Value) when is_float(Value) ->
-  float_to_binary(Value, [{decimals, 16}, compact]);
+  float_to_binary(Value, [{decimals, 64}, compact]);
 encode_value(Value) ->
   Value.
 
 -ifdef(PERF).
 horse_from_list() ->
-  horse:repeat(100000, begin
-    from_list([{foo, "bar"}, {xml, [{is, [{very, "enterprise"}], <<"!">>}]}, {<<"binary">>, "string"}])
-  end).
+  horse:repeat(100000,
+    from_list([{foo, "bar"}, {xml, [{is, [{very, "enterprise"}], <<"!">>}]}, {<<"binary">>, "string"}])).
 -endif.

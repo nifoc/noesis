@@ -36,7 +36,7 @@
 %      Based on the algorithm described <a href="https://developers.google.com/maps/documentation/utilities/polylinealgorithm">here</a>.
 -spec encode(noesis_geometry:path()) -> line().
 encode(Path) ->
-  encode_acc(Path, 0, 0, <<>>).
+  encode_acc(Path, 0, 0, []).
 
 % @doc Takes a {@link line()} and returns a {@link noesis_geometry:path()}.<br /><br />
 %      Based on the algorithm described <a href="https://developers.google.com/maps/documentation/utilities/polylinealgorithm">here</a>.
@@ -46,15 +46,15 @@ decode(Line) ->
 
 % Private
 
--spec encode_acc(noesis_geometry:path(), noesis_geometry:latitude(), noesis_geometry:longitude(), line()) -> line().
+-spec encode_acc(noesis_geometry:path(), noesis_geometry:latitude(), noesis_geometry:longitude(), iolist()) -> line().
 encode_acc([], _PLat, _PLng, Acc) ->
-  Acc;
+  iolist_to_binary(lists:reverse(Acc));
 encode_acc([{Lng, Lat}|Rest], PLat, PLng, Acc) ->
   LatE5 = round(Lat * 1.0e5),
   LngE5 = round(Lng * 1.0e5),
-  EncodedLat = encode_part(encode_sign(LatE5 - PLat), <<>>),
-  EncodedLng = encode_part(encode_sign(LngE5 - PLng), <<>>),
-  encode_acc(Rest, LatE5, LngE5, <<Acc/binary, EncodedLat/binary, EncodedLng/binary>>).
+  EncodedLat = encode_part(encode_sign(LatE5 - PLat), []),
+  EncodedLng = encode_part(encode_sign(LngE5 - PLng), []),
+  encode_acc(Rest, LatE5, LngE5, [[EncodedLat, EncodedLng] | Acc]).
 
 -spec encode_sign(integer()) -> integer().
 encode_sign(Num) when Num < 0 ->
@@ -62,12 +62,12 @@ encode_sign(Num) when Num < 0 ->
 encode_sign(Num) ->
   Num bsl 1.
 
--spec encode_part(integer(), binary()) -> binary().
+-spec encode_part(integer(), iolist()) -> iolist().
 encode_part(Num, Result) when Num < 32 ->
-  <<Result/binary, (Num + 63)>>;
+  [Result, Num + 63];
 encode_part(Num, Result) ->
   Value = (32 bor (Num band 31)) + 63,
-  encode_part(Num bsr 5, <<Result/binary, Value>>).
+  encode_part(Num bsr 5, [Result, Value]).
 
 -spec decode_acc(line(), noesis_geometry:latitude(), noesis_geometry:longitude(), noesis_geometry:path()) -> noesis_geometry:path().
 decode_acc(<<>>, _Lat, _Lng, Acc) ->
@@ -90,3 +90,9 @@ decode_part(<<C:8, Rest/binary>>, _OldB, Shift, Result) ->
   B = C - 63,
   Result2 = Result bor ((B band 31) bsl Shift),
   decode_part(Rest, B, Shift + 5, Result2).
+
+-ifdef(PERF).
+horse_encode() ->
+  horse:repeat(100000,
+    encode([{-120.2, 38.5}, {-120.95, 40.7}, {-126.453, 43.252}])).
+-endif.

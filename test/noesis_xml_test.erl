@@ -21,5 +21,4 @@ from_list_test() ->
   ?assertEqual(<<"<attr nice=\"meme\">value</attr>">>, noesis_xml:from_list([{"attr", [{nice, <<"meme">>}], "value"}])),
   ?assertEqual(
     <<"<foo>bar</foo><xml><is very=\"enterprise\">!</is></xml><binary>string</binary>">>,
-    noesis_xml:from_list([{foo, "bar"}, {xml, [{is, [{very, "enterprise"}], <<"!">>}]}, {<<"binary">>, "string"}])
-  ).
+    noesis_xml:from_list([{foo, "bar"}, {xml, [{is, [{very, "enterprise"}], <<"!">>}]}, {<<"binary">>, "string"}])).
