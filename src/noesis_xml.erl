@@ -25,9 +25,9 @@
 -type element_simple() :: {key(), value()}.
 -type element_attributes() :: {key(), attributes(), value()}.
 
--type element() :: element_simple().
+-type element() :: element_simple() | element_attributes().
 
--type elements() :: [element() | element_attributes()].
+-type elements() :: [element()].
 
 -export_type([
   element/0,

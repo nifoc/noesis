@@ -17,6 +17,7 @@
   noesis_proplists_triq,
   noesis_string_test,
   noesis_xml_test,
+  noesis_xml_triq,
   eunit_SUITE,
   triq_SUITE
 ]}.
