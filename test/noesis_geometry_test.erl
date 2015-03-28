@@ -65,7 +65,7 @@ rhumb_destination_point_test() ->
 rhumb_bearing_to_test() ->
   ?assertEqual(0.0, noesis_geometry:rhumb_bearing_to({1.3380600000000065, 48.96572992335743}, {1.3380600000000065, 51.12556})),
   ?assertEqual(180.0, noesis_geometry:rhumb_bearing_to({1.33806, 51.12556}, {1.3380600000000318, -83.73457882378777})),
-  ?assertEqual(116, trunc(noesis_geometry:rhumb_bearing_to({1.33806, 51.12556}, {4.399965478328651,50.178752812432656}))).
+  ?assertEqual(116, trunc(noesis_geometry:rhumb_bearing_to({1.33806, 51.12556}, {4.399965478328651, 50.178752812432656}))).
 
 deg2rad_test() ->
   ?assertEqual(0.017453292519943295, noesis_geometry:deg2rad(1)),

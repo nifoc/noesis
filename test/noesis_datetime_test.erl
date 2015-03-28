@@ -18,7 +18,7 @@ timestamp_test() ->
   ok = timer:sleep(1100),
   TimeB = noesis_datetime:timestamp(),
   ?assert(TimeA < TimeB),
-  ?assertEqual(1405202838, noesis_datetime:timestamp({{2014, 7, 12},{22, 7, 18}})).
+  ?assertEqual(1405202838, noesis_datetime:timestamp({{2014, 7, 12}, {22, 7, 18}})).
 
 local_timestamp_test() ->
   ?assert(noesis_datetime:local_timestamp() > 0),
@@ -28,7 +28,7 @@ local_timestamp_test() ->
   ?assert(TimeA < TimeB).
 
 timestamp_to_datetime_test() ->
-  ?assertEqual({{2014, 7, 12},{22, 7, 28}}, noesis_datetime:timestamp_to_datetime(1405202848)).
+  ?assertEqual({{2014, 7, 12}, {22, 7, 28}}, noesis_datetime:timestamp_to_datetime(1405202848)).
 
 timestamp_to_rfc1123_test() ->
   ?assertEqual(<<"Sun, 13 Jul 2014 17:24:08 GMT">>, noesis_datetime:timestamp_to_rfc1123(1405272248)).
