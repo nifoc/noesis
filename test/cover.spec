@@ -16,6 +16,7 @@
   noesis_proplists_test,
   noesis_proplists_triq,
   noesis_string_test,
+  noesis_task_test,
   noesis_xml_test,
   noesis_xml_triq,
   eunit_SUITE,
