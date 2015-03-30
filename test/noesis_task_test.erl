@@ -19,6 +19,13 @@ async_await_test() ->
   {Ref, _MRef, _Pid} = noesis_task:async(fun() -> ok end),
   ?assertEqual(ok, noesis_task:await(Ref)).
 
+async_await_multi_test() ->
+  T1 = noesis_task:async(fun() -> 1 end),
+  T2 = noesis_task:async(fun() -> 2 end),
+  Results = noesis_task:await_multi([{t1, T1}, {t2, T2}]),
+  ?assertEqual(1, noesis_proplists:get_value(t1, Results)),
+  ?assertEqual(2, noesis_proplists:get_value(t2, Results)).
+
 await_test_() ->
   {timeout, 10, fun() ->
     Ref = make_ref(),

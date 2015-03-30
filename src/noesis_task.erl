@@ -31,7 +31,9 @@
   async/1,
   async/3,
   await/1,
-  await/2
+  await/2,
+  await_multi/1,
+  await_multi/2
 ]).
 
 % API
@@ -70,3 +72,20 @@ await({Ref, MRef, Pid}, Timeout) ->
   after Timeout ->
     {error, timeout}
   end.
+
+-spec await_multi(noesis_proplists:proplist(A, task())) -> noesis_proplists:proplist(A, term()).
+await_multi(Tasks) ->
+  await_multi(Tasks, 5000).
+
+-spec await_multi(noesis_proplists:proplist(A, task()), pos_integer()) -> noesis_proplists:proplist(A, term()).
+await_multi(Tasks, Timeout) ->
+  await_multi_acc(Tasks, Timeout, []).
+
+% Private
+
+-spec await_multi_acc(noesis_proplists:proplist(A, task()), pos_integer(), noesis_proplists:proplist(A, term())) -> noesis_proplists:proplist(A, term()).
+await_multi_acc([], _Timeout, Acc) ->
+  Acc;
+await_multi_acc([{Key, Task}|Rest], Timeout, Acc) ->
+  Result = await(Task, Timeout),
+  await_multi_acc(Rest, Timeout, [{Key, Result} | Acc]).
