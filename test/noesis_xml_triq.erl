@@ -38,7 +38,9 @@ proplist_simple_string() -> list({non_empty_string(), non_empty_string()}).
 
 proplist_attributes() -> list({list_key(), [{list_key(), list_value_simple()}], list_value()}).
 
-proplist() -> oneof([proplist_simple(), proplist_attributes()]).
+proplist_attr_options() -> list({list_key(), [{list_key(), list_value_simple()}], list_value(), []}).
+
+proplist() -> oneof([proplist_simple(), proplist_attributes(), proplist_attr_options()]).
 
 % Properties
 

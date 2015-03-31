@@ -22,10 +22,16 @@
 -type value() :: simple_value() | elements().
 -type attributes() :: noesis_proplists:proplist(key(), simple_value()).
 
+-type option_cdata() :: {cdata, boolean()}.
+
+-type option() :: option_cdata().
+-type options() :: [option()].
+
 -type element_simple() :: {key(), value()}.
 -type element_attributes() :: {key(), attributes(), value()}.
+-type element_attr_options() :: {key(), attributes(), value(), options()}.
 
--type element() :: element_simple() | element_attributes().
+-type element() :: element_simple() | element_attributes() | element_attr_options().
 
 -type elements() :: [element()].
 
@@ -33,6 +39,7 @@
   key/0,
   value/0,
   attributes/0,
+  options/0,
   element/0,
   elements/0
 ]).
@@ -68,6 +75,15 @@ encode_element({Key, Attributes, Value}, Acc) ->
   EncodedKey = encode_key(Key),
   EncodedAttributes = encode_attributes(Attributes, []),
   EncodedValue = encode_value(Value),
+  EncodedElement = [$<, EncodedKey, EncodedAttributes, $>, EncodedValue, "</", EncodedKey, $>],
+  [EncodedElement | Acc];
+encode_element({Key, Attributes, Value, Options}, Acc) ->
+  EncodedKey = encode_key(Key),
+  EncodedAttributes = encode_attributes(Attributes, []),
+  EncodedValue = case noesis_proplists:get_value(cdata, Options, false) of
+    true -> ["<![CDATA[", encode_value(Value), "]]>"];
+    false -> encode_value(Value)
+  end,
   EncodedElement = [$<, EncodedKey, EncodedAttributes, $>, EncodedValue, "</", EncodedKey, $>],
   [EncodedElement | Acc].
 
