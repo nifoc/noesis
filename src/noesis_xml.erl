@@ -51,7 +51,7 @@
 
 % API
 
-% @doc Taskes a list of {@link elements()} and returns a XML-binary.
+% @doc Takes a list of {@link elements()} and returns a XML-binary.
 -spec from_list(elements()) -> binary().
 from_list(Elements) ->
   from_list_acc(Elements, []).

@@ -73,10 +73,12 @@ await({Ref, MRef, Pid}, Timeout) ->
     {error, timeout}
   end.
 
+% @doc Awaits multiple {@link task()} replies. The `Timeout' per task is set to `5000' ms.
 -spec await_multi(noesis_proplists:proplist(A, task())) -> noesis_proplists:proplist(A, term()).
 await_multi(Tasks) ->
   await_multi(Tasks, 5000).
 
+% @doc Awaits multiple {@link task()} replies. The `Timeout' is applied on a per task basis.
 -spec await_multi(noesis_proplists:proplist(A, task()), pos_integer()) -> noesis_proplists:proplist(A, term()).
 await_multi(Tasks, Timeout) ->
   await_multi_acc(Tasks, Timeout, []).
