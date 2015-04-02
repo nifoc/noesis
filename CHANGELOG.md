@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+* Correctly demonitor the worker process in `noesis_task:await/2`
+
 ## 0.3
 
 [Documentation](http://noesis.nifoc.pw/0.3/)
