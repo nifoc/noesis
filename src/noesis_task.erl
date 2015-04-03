@@ -68,7 +68,10 @@ await(Ref, Timeout) when is_reference(Ref) ->
 await({Ref, MRef, Pid}, Timeout) ->
   receive
     {Ref, Result} ->
-      demonitor(MRef, [flush]),
+      true = if
+        is_reference(MRef) -> demonitor(MRef, [flush]);
+        true -> true
+      end,
       Result;
     {'DOWN', MRef, process, Pid, Reason} -> {error, Reason}
   after Timeout ->
