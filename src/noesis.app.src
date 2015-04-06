@@ -1,6 +1,6 @@
 {application, noesis, [
   {description, "A collection of useful utility functions."},
-  {vsn, "0.3"},
+  {vsn, "0.3.1"},
   {modules, []},
   {registered, []},
   {applications, [

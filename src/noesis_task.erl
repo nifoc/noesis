@@ -68,10 +68,7 @@ await(Ref, Timeout) when is_reference(Ref) ->
 await({Ref, MRef, Pid}, Timeout) ->
   receive
     {Ref, Result} ->
-      true = if
-        is_reference(MRef) -> demonitor(MRef, [flush]);
-        true -> true
-      end,
+      ok = maybe_demonitor(MRef),
       Result;
     {'DOWN', MRef, process, Pid, Reason} -> {error, Reason}
   after Timeout ->
@@ -96,3 +93,10 @@ await_multi_acc([], _Timeout, Acc) ->
 await_multi_acc([{Key, Task}|Rest], Timeout, Acc) ->
   Result = await(Task, Timeout),
   await_multi_acc(Rest, Timeout, [{Key, Result} | Acc]).
+
+-spec maybe_demonitor(reference() | unknown) -> ok.
+maybe_demonitor(unknown) ->
+  ok;
+maybe_demonitor(MRef) ->
+  true = demonitor(MRef, [flush]),
+  ok.

@@ -1,5 +1,5 @@
 PROJECT = noesis
-PROJECT_VERSION = 0.3
+PROJECT_VERSION = 0.3.1
 
 otp_release = $(shell erl -noshell -eval 'io:format("~s", [erlang:system_info(otp_release)]), init:stop()')
 otp_17plus = $(shell echo $(otp_release) | grep -q -E "^[[:digit:]]+$$" ; echo $$?)

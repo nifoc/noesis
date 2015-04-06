@@ -6,7 +6,7 @@ A collection of useful utility functions.
 
 ## Resources
 
-* [Generated EDoc](http://noesis.nifoc.pw/0.3/) ([All Versions](http://noesis.nifoc.pw))
+* [Generated EDoc](http://noesis.nifoc.pw/0.3.1/) ([All Versions](http://noesis.nifoc.pw))
 
 ## License
 
